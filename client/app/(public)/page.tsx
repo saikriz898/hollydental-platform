@@ -26,6 +26,12 @@ export const metadata: Metadata = {
     locale: "en_IE",
     type: "website",
   },
+  verification: {
+    google: [
+      "eAtQf1djYq1XS5cZ3SMpKWtTKh_oWc7_zd1XUlp0N3w",
+      "fyCZcV1-Gw6oxx6UCG3sLL2Drz93Wge2iHB1Jk4zUnQ"
+    ],
+  },
 };
 
 export default function HomePage() {
