@@ -1,0 +1,37 @@
+{
+  "name": "hollyhill-dental-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "vapid:generate": "node scripts/generate-vapid.mjs",
+    "seed:doctor": "node scripts/seed-doctor.mjs",
+    "seed:products": "node scripts/seed-products.mjs",
+    "db:reset": "node scripts/reset-db.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node src/db/migrate.js",
+    "test-vapid": "node -e \"import('./src/lib/push.js').then(() => console.log('Done'))\""
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.5.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.30.10",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.2.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.11.5",
+    "stripe": "^15.8.0",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.21.4"
+  }
+}
