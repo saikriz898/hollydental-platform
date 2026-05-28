@@ -201,10 +201,10 @@ export default function AboutPage() {
 
           {/* Crest card */}
           <div className="lg:col-span-5 flex justify-center">
-            <div className="relative w-full max-w-[480px] aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-navy">
+            <div className="relative w-full max-w-[540px] aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-navy">
               <img
-                src="/clinic-storefront.png"
-                alt="Hollyhill Dental Clinic storefront exterior"
+                src="/dentist-mirror.png"
+                alt="Hollyhill Dental Clinic dentist mirror"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-navy via-navy/80 to-transparent">

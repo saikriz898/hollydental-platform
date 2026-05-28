@@ -85,47 +85,122 @@ const FAQS = [
 ];
 
 function clinicalImageFor(slug: string) {
-  // Real patient photos are paired so the left half shows the original
-  // condition and the right half shows the polished result. The "after"
-  // image is the same brilliant smile across procedures because it is
-  // genuinely the strongest result we have on file.
-  const after = "/image.png";
   switch (slug) {
-    case "general-dentistry":
-    case "dental-checkups":
-    case "teeth-cleaning":
-    case "tooth-extractions":
     case "emergency-dentistry":
+      return {
+        before: "/before & after/Emergency Dentistry_before.jpg",
+        after: "/before & after/Emergency Dentistry_after.jpg",
+        initials: "E.D.",
+      };
+    case "tooth-extractions":
+      return {
+        before: "/before & after/Tooth Extraction_before.jpg",
+        after: "/before & after/Tooth Extraction_after.jpg",
+        initials: "T.E.",
+      };
+    case "surgical-extractions":
+      return {
+        before: "/before & after/Surgical Extractions_before.png",
+        after: "/before & after/Surgical Extractions.png",
+        initials: "S.E.",
+      };
     case "composite-fillings":
-      return { before: "/image_copy_2.png", after, initials: "G.D." };
+    case "silver-fillings":
+    case "temporary-fillings":
+      return {
+        before: "/before & after/White Filling_before.jpg",
+        after: "/before & after/White Filling_after.jpg",
+        initials: "W.F.",
+      };
+    case "teeth-cleaning":
+      return {
+        before: "/before & after/Hygiene & Teeth Cleaning_before.png",
+        after: "/before & after/Hygiene & Teeth Cleaning_after.png",
+        initials: "H.C.",
+      };
     case "teeth-whitening":
-      return { before: "/image_copy.png", after, initials: "R.W." };
+      return {
+        before: "/before & after/Teeth Whitening_before.jpg",
+        after: "/before & after/Teeth Whitening_after.jpg",
+        initials: "T.W.",
+      };
     case "composite-bonding":
     case "composite-veneers":
-      return { before: "/image_copy_5.png", after, initials: "P.K." };
+      return {
+        before: "/before & after/Composite Bonding_before.jpg",
+        after: "/before & after/Composite Bonding_after.jpg",
+        initials: "P.K.",
+      };
     case "veneers":
-      return { before: "/image_copy.png", after, initials: "A.C." };
+      return {
+        before: "/before & after/Veneers_before.jpg",
+        after: "/before & after/Veneers_after.jpg",
+        initials: "A.C.",
+      };
     case "invisalign":
     case "invisalign-go-single":
+      return {
+        before: "/before & after/Invansion Go_before.png",
+        after: "/before & after/Invansion Go_after.png",
+        initials: "I.G.",
+      };
     case "invisalign-go-double":
+      return {
+        before: "/before & after/Invisalign Go - Double_before.png",
+        after: "/before & after/Invisalign Go - Double_after.png",
+        initials: "I.D.",
+      };
     case "invisalign-full":
+      return {
+        before: "/before & after/Invisalign Full_before.png",
+        after: "/before & after/Invisalign Full_after.png",
+        initials: "I.F.",
+      };
     case "full-smile-makeovers":
-      return { before: "/image_copy_2.png", after, initials: "L.D." };
     case "smile-design":
     case "digital-smile-consultation":
+      return {
+        before: "/before & after/Smile Design_before.png",
+        after: "/before & after/Smile Design_after.png",
+        initials: "S.D.",
+      };
     case "dental-crowns":
+      return {
+        before: "/before & after/Dental Crowns_before.png",
+        after: "/before & after/Dental Crowns_after.png",
+        initials: "D.C.",
+      };
     case "dental-bridges":
-    case "dentures":
-      return { before: "/image_copy_3.png", after, initials: "J.S." };
+      return {
+        before: "/before & after/Bridges_before.png",
+        after: "/before & after/Bridges_after.png",
+        initials: "D.B.",
+      };
     case "gum-treatment":
     case "periodontal-care":
-      return { before: "/image_copy_5.png", after, initials: "G.T." };
+      return {
+        before: "/before & after/Gum Treatment_before.png",
+        after: "/before & after/Gum Treatment_after.png",
+        initials: "G.T.",
+      };
+    case "dentures":
+      return {
+        before: "/before & after/Dentures_before.png",
+        after: "/before & after/Dentures_after.png",
+        initials: "D.T.",
+      };
+    case "general-dentistry":
+    case "dental-checkups":
     case "root-canal":
     case "root-canal-canine":
     case "root-canal-premolar":
     case "root-canal-molar":
     default:
-      return { before: "/image_copy_2.png", after, initials: "M.H." };
+      return {
+        before: "/before & after/General Dentistry_Before.jpg",
+        after: "/before & after/General Dentistry_After.jpg",
+        initials: "M.H.",
+      };
   }
 }
 
@@ -267,7 +342,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
           </div>
 
           <div className="lg:col-span-5">
-            <div className="space-y-4">
+            <div className="space-y-4 max-w-[420px] md:max-w-[500px] mx-auto w-full">
               <span className="block text-[10px] uppercase tracking-widest font-semibold text-gold text-center">
                 Procedural transformation
               </span>

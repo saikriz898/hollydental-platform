@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { GripVertical, Sparkles } from "lucide-react";
+import { GripHorizontal, Sparkles } from "lucide-react";
 
 interface BeforeAfterSliderProps {
   beforeImage?: string;
@@ -13,10 +13,10 @@ interface BeforeAfterSliderProps {
 }
 
 /**
- * Premium before/after image comparison slider.
+ * Premium before/after image comparison slider (Vertical).
  *
- * Two layers, the "after" image clipped to the right of the divider. The
- * handle is keyboard accessible (←/→ to nudge, Home/End to jump) and the
+ * Two layers, the "after" image clipped to the bottom of the divider. The
+ * handle is keyboard accessible (←/→ or ↑/↓ to nudge, Home/End to jump) and the
  * whole component falls back gracefully when an image fails to load.
  */
 export default function BeforeAfterSlider({
@@ -32,23 +32,23 @@ export default function BeforeAfterSlider({
   const [afterFailed, setAfterFailed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const updateFromClientX = useCallback((clientX: number) => {
+  const updateFromClientY = useCallback((clientY: number) => {
     const el = containerRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const next = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    const y = clientY - rect.top;
+    const next = Math.max(0, Math.min(100, (y / rect.height) * 100));
     setPosition(next);
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
-    updateFromClientX(e.clientX);
+    updateFromClientY(e.clientY);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return;
-    if (e.touches[0]) updateFromClientX(e.touches[0].clientX);
+    if (e.touches[0]) updateFromClientY(e.touches[0].clientY);
   };
 
   useEffect(() => {
@@ -62,9 +62,9 @@ export default function BeforeAfterSlider({
   }, []);
 
   const handleKey = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowLeft") {
+    if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
       setPosition((p) => Math.max(0, p - 4));
-    } else if (e.key === "ArrowRight") {
+    } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
       setPosition((p) => Math.min(100, p + 4));
     } else if (e.key === "Home") {
       setPosition(0);
@@ -78,8 +78,8 @@ export default function BeforeAfterSlider({
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
-      style={{ touchAction: "pan-y" }}
-      className="relative w-full aspect-[4/3] md:aspect-[16/10] rounded-3xl overflow-hidden select-none border border-gray-100 shadow-[0_20px_60px_-20px_rgba(10,22,40,0.35)] bg-navy/5 group"
+      style={{ touchAction: "pan-x" }}
+      className="relative w-full aspect-[3/4] md:aspect-[4/3] rounded-3xl overflow-hidden select-none border border-gray-100 shadow-[0_20px_60px_-20px_rgba(10,22,40,0.35)] bg-navy/5 group"
     >
       {/* Before image — base layer */}
       <ImagePane
@@ -88,13 +88,14 @@ export default function BeforeAfterSlider({
         failed={beforeFailed}
         onError={() => setBeforeFailed(true)}
         fallbackLabel="Before"
+        isAfter={false}
       />
 
-      {/* After image — clipped to the right of the handle */}
+      {/* After image — clipped to the bottom of the handle */}
       <div
         className="absolute inset-0 z-10 will-change-[clip-path] transition-[clip-path] duration-75"
         style={{
-          clipPath: `polygon(${position}% 0, 100% 0, 100% 100%, ${position}% 100%)`,
+          clipPath: `polygon(0 ${position}%, 100% ${position}%, 100% 100%, 0 100%)`,
         }}
       >
         <ImagePane
@@ -104,34 +105,38 @@ export default function BeforeAfterSlider({
           onError={() => setAfterFailed(true)}
           fallbackLabel="After"
           tone="gold"
+          isAfter={true}
         />
       </div>
 
       {/* Subtle vignette + scrim for chip readability */}
       <div className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-t from-black/35 via-transparent to-black/25" />
 
-      {/* Top labels */}
-      <span
-        className="absolute top-4 left-4 z-30 inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-navy text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 rounded-full uppercase shadow-sm border border-white/60"
-        aria-hidden
-      >
-        <span className="w-1.5 h-1.5 rounded-full bg-navy" />
-        Before
-      </span>
-      <span
-        className="absolute top-4 right-4 z-30 inline-flex items-center gap-1.5 bg-gold text-navy text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 rounded-full uppercase shadow-sm"
-        aria-hidden
-      >
-        <Sparkles className="w-3 h-3" />
-        After
-      </span>
+      {/* Dynamic Top label based on slider position */}
+      {position < 50 ? (
+        <span
+          className="absolute top-4 left-4 z-30 inline-flex items-center gap-1.5 bg-gold text-navy text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 rounded-full uppercase shadow-sm transition-all duration-200"
+          aria-hidden
+        >
+          <Sparkles className="w-3 h-3" />
+          After
+        </span>
+      ) : (
+        <span
+          className="absolute top-4 left-4 z-30 inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-navy text-[10px] font-bold tracking-[0.2em] px-3 py-1.5 rounded-full uppercase shadow-sm border border-white/60 transition-all duration-200"
+          aria-hidden
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-navy" />
+          Before
+        </span>
+      )}
 
       {/* Divider line */}
       <div
-        className="absolute top-0 bottom-0 z-30 -translate-x-1/2 pointer-events-none"
-        style={{ left: `${position}%` }}
+        className="absolute left-0 right-0 z-30 -translate-y-1/2 pointer-events-none"
+        style={{ top: `${position}%` }}
       >
-        <span className="block w-[2px] h-full bg-white/85 shadow-[0_0_24px_rgba(201,169,110,0.45)]" />
+        <span className="block w-full h-[2px] bg-white/85 shadow-[0_0_24px_rgba(201,169,110,0.45)]" />
       </div>
 
       {/* Handle — interactive */}
@@ -146,18 +151,18 @@ export default function BeforeAfterSlider({
         onMouseDown={(e) => {
           e.preventDefault();
           setIsDragging(true);
-          updateFromClientX(e.clientX);
+          updateFromClientY(e.clientY);
         }}
         onTouchStart={(e) => {
           if (e.touches[0]) {
             setIsDragging(true);
-            updateFromClientX(e.touches[0].clientX);
+            updateFromClientY(e.touches[0].clientY);
           }
         }}
-        className="absolute top-1/2 z-40 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white border-2 border-gold/80 flex items-center justify-center shadow-[0_8px_24px_-6px_rgba(10,22,40,0.4)] cursor-ew-resize active:scale-95 transition-transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
-        style={{ left: `${position}%` }}
+        className="absolute left-1/2 z-40 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white border-2 border-gold/80 flex items-center justify-center shadow-[0_8px_24px_-6px_rgba(10,22,40,0.4)] cursor-ns-resize active:scale-95 transition-transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2"
+        style={{ top: `${position}%` }}
       >
-        <GripVertical className="w-4 h-4 text-navy" />
+        <GripHorizontal className="w-4 h-4 text-navy" />
         <span className="sr-only">Drag to compare before and after</span>
       </button>
 
@@ -176,7 +181,7 @@ export default function BeforeAfterSlider({
             </span>
           )}
         </div>
-        <div className="bg-gold text-navy rounded-xl px-3 py-2 shadow-md text-right">
+        <div className="bg-gold text-navy rounded-xl px-3 py-2 shadow-md text-right shrink-0">
           <span className="block text-[9px] uppercase tracking-[0.2em] font-bold opacity-80">
             Patient
           </span>
@@ -198,6 +203,7 @@ function ImagePane({
   onError,
   fallbackLabel,
   tone = "navy",
+  isAfter = false,
 }: {
   src: string;
   alt: string;
@@ -205,6 +211,7 @@ function ImagePane({
   onError: () => void;
   fallbackLabel: string;
   tone?: "navy" | "gold";
+  isAfter?: boolean;
 }) {
   if (failed) {
     return (

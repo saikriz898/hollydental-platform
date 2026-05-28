@@ -15,6 +15,8 @@ export default function GalleryPage() {
     { key: "whitening", label: "Whitening" },
     { key: "bonding", label: "Bonding" },
     { key: "smile-design", label: "Smile Design" },
+    { key: "restorative", label: "Crowns & Bridges" },
+    { key: "general", label: "General & Hygiene" },
   ];
 
   const AFTER_IMG = "/image.png";
@@ -24,43 +26,120 @@ export default function GalleryPage() {
       category: "veneers",
       treatmentName: "Porcelain Veneers",
       initials: "A.C.",
-      before: "/image_copy.png",
-      after: AFTER_IMG,
-    },
-    {
-      category: "bonding",
-      treatmentName: "Composite Bonding",
-      initials: "M.H.",
-      before: "/image_copy_5.png",
-      after: AFTER_IMG,
-    },
-    {
-      category: "invisalign",
-      treatmentName: "Invisalign Clear Aligners",
-      initials: "L.D.",
-      before: "/image_copy_2.png",
-      after: AFTER_IMG,
-    },
-    {
-      category: "smile-design",
-      treatmentName: "Digital Smile Makeover",
-      initials: "J.S.",
-      before: "/image_copy_3.png",
-      after: AFTER_IMG,
-    },
-    {
-      category: "whitening",
-      treatmentName: "In-Clinic Laser Whitening",
-      initials: "R.W.",
-      before: "/image.png",
-      after: AFTER_IMG,
+      before: "/before & after/Veneers_before.jpg",
+      after: "/before & after/Veneers_after.jpg",
     },
     {
       category: "bonding",
       treatmentName: "Composite Bonding",
       initials: "P.K.",
-      before: "/image_copy_5.png",
-      after: AFTER_IMG,
+      before: "/before & after/Composite Bonding_before.jpg",
+      after: "/before & after/Composite Bonding_after.jpg",
+    },
+    {
+      category: "restorative",
+      treatmentName: "Dental Crowns",
+      initials: "D.C.",
+      before: "/before & after/Dental Crowns_before.png",
+      after: "/before & after/Dental Crowns_after.png",
+    },
+    {
+      category: "restorative",
+      treatmentName: "Dental Bridges",
+      initials: "D.B.",
+      before: "/before & after/Bridges_before.png",
+      after: "/before & after/Bridges_after.png",
+    },
+    {
+      category: "bonding",
+      treatmentName: "White Filling",
+      initials: "W.F.",
+      before: "/before & after/White Filling_before.jpg",
+      after: "/before & after/White Filling_after.jpg",
+    },
+    {
+      category: "general",
+      treatmentName: "Tooth Extraction",
+      initials: "T.E.",
+      before: "/before & after/Tooth Extraction_before.jpg",
+      after: "/before & after/Tooth Extraction_after.jpg",
+    },
+    {
+      category: "invisalign",
+      treatmentName: "Invisalign Full",
+      initials: "I.F.",
+      before: "/before & after/Invisalign Full_before.png",
+      after: "/before & after/Invisalign Full_after.png",
+    },
+    {
+      category: "invisalign",
+      treatmentName: "Invisalign Go - Double",
+      initials: "I.D.",
+      before: "/before & after/Invisalign Go - Double_before.png",
+      after: "/before & after/Invisalign Go - Double_after.png",
+    },
+    {
+      category: "invisalign",
+      treatmentName: "Invisalign Go - Single",
+      initials: "I.G.",
+      before: "/before & after/Invansion Go_before.png",
+      after: "/before & after/Invansion Go_after.png",
+    },
+    {
+      category: "smile-design",
+      treatmentName: "Smile Design",
+      initials: "S.D.",
+      before: "/before & after/Smile Design_before.png",
+      after: "/before & after/Smile Design_after.png",
+    },
+    {
+      category: "general",
+      treatmentName: "Hygiene & Teeth Cleaning",
+      initials: "H.C.",
+      before: "/before & after/Hygiene & Teeth Cleaning_before.png",
+      after: "/before & after/Hygiene & Teeth Cleaning_after.png",
+    },
+    {
+      category: "general",
+      treatmentName: "Gum Treatment",
+      initials: "G.T.",
+      before: "/before & after/Gum Treatment_before.png",
+      after: "/before & after/Gum Treatment_after.png",
+    },
+    {
+      category: "whitening",
+      treatmentName: "Teeth Whitening",
+      initials: "T.W.",
+      before: "/before & after/Teeth Whitening_before.jpg",
+      after: "/before & after/Teeth Whitening_after.jpg",
+    },
+    {
+      category: "general",
+      treatmentName: "General Dentistry",
+      initials: "G.D.",
+      before: "/before & after/General Dentistry_Before.jpg",
+      after: "/before & after/General Dentistry_After.jpg",
+    },
+    {
+      category: "general",
+      treatmentName: "Emergency Dentistry",
+      initials: "E.D.",
+      before: "/before & after/Emergency Dentistry_before.jpg",
+      after: "/before & after/Emergency Dentistry_after.jpg",
+    },
+    {
+      category: "restorative",
+      treatmentName: "Dentures",
+      initials: "D.T.",
+      before: "/before & after/Dentures_before.png",
+      after: "/before & after/Dentures_after.png",
+    },
+    {
+      category: "general",
+      treatmentName: "Surgical Extractions",
+      initials: "S.E.",
+      before: "/before & after/Surgical Extractions_before.png",
+      after: "/before & after/Surgical Extractions.png",
     }
   ];
 
@@ -68,7 +147,7 @@ export default function GalleryPage() {
 
   return (
     <div className="space-y-16 pb-16">
-      
+
       {/* Interior Hero */}
       <section className="bg-navy text-white py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gold/10 opacity-40" />
@@ -87,9 +166,8 @@ export default function GalleryPage() {
             <button
               key={c.key}
               onClick={() => setFilter(c.key)}
-              className={`py-2 px-4 rounded-full text-xs font-semibold transition-all focus:outline-none ${
-                filter === c.key ? "bg-gold text-navy" : "bg-gray-50 text-navy hover:bg-gray-100"
-              }`}
+              className={`py-2 px-4 rounded-full text-xs font-semibold transition-all focus:outline-none ${filter === c.key ? "bg-gold text-navy" : "bg-gray-50 text-navy hover:bg-gray-100"
+                }`}
             >
               {c.label}
             </button>
@@ -104,9 +182,9 @@ export default function GalleryPage() {
             No transformations under this category yet. Check back soon!
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredItems.map((item, idx) => (
-              <div key={idx} className="space-y-2">
+              <div key={idx} className="space-y-2 max-w-[360px] md:max-w-[480px] mx-auto w-full">
                 <BeforeAfterSlider
                   treatmentName={item.treatmentName}
                   initials={item.initials}
