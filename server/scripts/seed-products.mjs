@@ -24,8 +24,7 @@ const PRODUCTS = [
     priceTo: "180.00",
     description:
       "With dental bonding we can repair chips, stains and fluorosis, and reshape or resize teeth to improve your smile. Composite (white tooth filling) is carefully sculpted onto the tooth and polished for a natural finish. Book an appointment with our team — we'll walk you through the process and put your mind at ease. Call 021 430 3072 for bookings.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&q=80&w=900",
+    imageUrl: "/products/dental-bonding.svg",
     stockCount: 0,
     displayOrder: 1,
   },
@@ -36,8 +35,7 @@ const PRODUCTS = [
     priceTo: null,
     description:
       "Fresh lime mint toothpaste from Curaprox with activated carbon to gently lift surface stains and brighten the natural whiteness of teeth. Daily use, fluoride formula, suitable for sensitive teeth.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1559591937-abc3a86fb22a?auto=format&fit=crop&q=80&w=900",
+    imageUrl: "/products/black-is-white-toothpaste.svg",
     stockCount: 12,
     displayOrder: 1,
   },
@@ -48,8 +46,7 @@ const PRODUCTS = [
     priceTo: null,
     description:
       "Advanced at-home teeth whitening system. Pola Light pairs the award-winning Pola whitening formula with an LED mouthpiece for a noticeably brighter, more confident smile in as little as 5 days. Includes whitening gel, LED activator, and step-by-step instructions.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&q=80&w=900",
+    imageUrl: "/products/pola-light-whitening.svg",
     stockCount: 8,
     displayOrder: 2,
   },

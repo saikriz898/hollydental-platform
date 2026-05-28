@@ -174,7 +174,12 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-6 relative">
           {/* Logo block */}
           <div className="flex items-center gap-3 shrink-0">
-            <Logo variant="full" theme="dark" size={scrolled ? 30 : 36} />
+            <div className="inline-flex sm:hidden">
+              <Logo variant="full" theme="dark" size={scrolled ? 36 : 42} />
+            </div>
+            <div className="hidden sm:inline-flex">
+              <Logo variant="full" theme="dark" size={scrolled ? 50 : 64} />
+            </div>
           </div>
 
           {/* Center nav — only ≥1024px */}
@@ -300,7 +305,7 @@ export default function Navbar() {
                   aria-expanded={showAccount}
                   className="inline-flex items-center gap-2 hover:bg-navy/5 text-navy pl-1.5 pr-3 py-1.5 rounded-full font-medium text-xs transition-colors border border-transparent hover:border-gray-100"
                 >
-                  <span className="w-7 h-7 rounded-full bg-gradient-to-br from-gold to-gold-dark text-navy flex items-center justify-center font-bold text-[11px] shadow-sm">
+                  <span className="w-7 h-7 rounded-full bg-gradient-to-br from-gold to-gold-dark text-white flex items-center justify-center font-bold text-[11px] shadow-sm">
                     {(user.patientProfile?.firstName?.[0] || user.email?.[0] || "U").toUpperCase()}
                   </span>
                   <span className="hidden xl:inline truncate max-w-[120px]">
@@ -312,7 +317,7 @@ export default function Navbar() {
                     }`}
                   />
                 </button>
-
+ 
                 {showAccount && (
                   <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl border border-gray-100 shadow-[0_20px_50px_-15px_rgba(10,22,40,0.25)] p-3 z-50 animate-fade-up overflow-hidden">
                     <span className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold/0 via-gold to-gold/0" />
@@ -361,24 +366,23 @@ export default function Navbar() {
                 Sign in
               </button>
             )}
-
-            <button
+ 
+             <button
               type="button"
               onClick={goToBooking}
-              className="group relative bg-gradient-to-br from-gold to-gold-dark text-navy font-semibold px-5 py-2.5 rounded-full text-sm shadow-[0_8px_24px_-8px_rgba(201,169,110,0.6)] hover:shadow-[0_12px_28px_-8px_rgba(201,169,110,0.7)] transition-all duration-200 inline-flex items-center gap-2 overflow-hidden"
+              className="bg-gold hover:bg-[#009bde] text-white font-bold px-6 py-3 rounded-full text-sm shadow-[0_4px_0_0_#008BCC] hover:shadow-[0_5px_0_0_#008BCC] hover:translate-y-[-1px] active:translate-y-[3px] active:shadow-none transition-all duration-75 inline-flex items-center gap-2 cursor-pointer"
             >
-              <span className="absolute inset-0 bg-white/20 translate-x-[-120%] group-hover:translate-x-[120%] transition-transform duration-700" />
-              <span className="relative">Book Appointment</span>
-              <ArrowRight className="w-4 h-4 relative transition-transform group-hover:translate-x-0.5" />
+              <span>Book Appointment</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </button>
           </div>
-
+ 
           {/* Mobile actions */}
           <div className="flex lg:hidden items-center gap-2 sm:gap-3">
             <button
               type="button"
               onClick={goToBooking}
-              className="bg-gradient-to-br from-gold to-gold-dark text-navy font-semibold px-3 sm:px-4 py-2 rounded-full text-xs shadow-md inline-flex items-center gap-1.5"
+              className="bg-gold hover:bg-[#009bde] text-white font-bold px-3.5 sm:px-4 py-2.5 rounded-full text-xs shadow-[0_3px_0_0_#008BCC] hover:shadow-[0_4px_0_0_#008BCC] hover:translate-y-[-1px] active:translate-y-[2px] active:shadow-none transition-all duration-75 inline-flex items-center gap-1.5 cursor-pointer"
             >
               <Calendar className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Book</span>
@@ -400,7 +404,7 @@ export default function Navbar() {
       {isOpen && (
         <div className="fixed inset-0 bg-navy text-white z-50 flex flex-col p-6 sm:p-8 animate-fade-up overflow-y-auto">
           <div className="flex items-center justify-between mb-6">
-            <Logo variant="full" theme="light" size={32} asLink={false} />
+            <Logo variant="full" theme="light" size={42} asLink={false} />
             <button
               type="button"
               onClick={() => setIsOpen(false)}
@@ -419,9 +423,13 @@ export default function Navbar() {
             <div className="border-b border-white/10">
               <button
                 type="button"
-                onClick={() => setMobileServicesOpen((v) => !v)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setMobileServicesOpen((v) => !v);
+                }}
                 aria-expanded={mobileServicesOpen}
-                className="w-full py-3 flex items-center justify-between hover:text-gold transition-colors"
+                className="w-full py-3 flex items-center justify-between hover:text-gold transition-colors cursor-pointer select-none"
               >
                 <span>Services</span>
                 <ChevronDown
@@ -502,10 +510,10 @@ export default function Navbar() {
             )}
           </nav>
 
-          <div className="mt-auto flex flex-col gap-3 pt-6">
+          <div className="mt-auto flex flex-col gap-4 pt-6">
             <a
               href={CLINIC.phoneHref}
-              className="bg-transparent border border-gold hover:bg-gold hover:text-navy text-gold text-center py-3 rounded-lg font-semibold transition-all inline-flex items-center justify-center gap-2"
+              className="border border-gold/35 hover:border-gold hover:text-white text-gold text-center py-3.5 rounded-xl font-bold shadow-[0_3px_0_0_rgba(201,169,110,0.15)] hover:shadow-[0_4px_0_0_rgba(201,169,110,0.2)] hover:translate-y-[-1px] active:translate-y-[2px] active:shadow-none transition-all duration-75 inline-flex items-center justify-center gap-2 bg-white/5 cursor-pointer"
             >
               <Phone className="w-4 h-4" /> Call {CLINIC.phone}
             </a>
@@ -515,7 +523,7 @@ export default function Navbar() {
                 setIsOpen(false);
                 goToBooking();
               }}
-              className="bg-gradient-to-br from-gold to-gold-dark text-navy text-center py-3 rounded-lg font-bold shadow-lg cursor-pointer inline-flex items-center justify-center gap-2"
+              className="bg-gold hover:bg-[#009bde] text-white text-center py-3.5 rounded-xl font-bold shadow-[0_4px_0_0_#008BCC] hover:shadow-[0_5px_0_0_#008BCC] hover:translate-y-[-1px] active:translate-y-[3px] active:shadow-none transition-all duration-75 cursor-pointer inline-flex items-center justify-center gap-2"
             >
               Book Appointment
               <ArrowRight className="w-4 h-4" />
@@ -531,24 +539,27 @@ export default function Navbar() {
       {/* Floating emergency pill (mobile) */}
       <a
         href={CLINIC.phoneHref}
-        className="lg:hidden fixed bottom-24 right-4 z-40 bg-red-600 text-white font-bold px-4 py-3 rounded-full inline-flex items-center gap-2 shadow-xl border border-red-500"
+        aria-label="Emergency Call"
+        className="lg:hidden fixed bottom-20 right-4 z-40 bg-red-600 hover:bg-red-500 text-white font-bold w-12 h-12 rounded-full inline-flex items-center justify-center shadow-[0_4px_0_0_#991b1b] hover:shadow-[0_5px_0_0_#991b1b] hover:translate-y-[-1px] active:translate-y-[3px] active:shadow-none transition-all duration-75 border border-red-500/20 cursor-pointer"
       >
-        <ShieldAlert className="w-4 h-4" />
-        <span>Emergency</span>
+        <ShieldAlert className="w-6 h-6" />
       </a>
 
       {/* Bottom nav (mobile) */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 flex items-center justify-around px-2 z-40 shadow-inner">
-        <BottomLink href="/" icon={<Home className="w-5 h-5" />} label="Home" />
+        <BottomLink href="/" icon={<Home className="w-5 h-5" />} label="Home" active={isActive("/")} />
         <BottomLink
           href="/services"
           icon={<Briefcase className="w-5 h-5" />}
           label="Services"
+          active={isActive("/services")}
         />
         <button
           type="button"
           onClick={goToBooking}
-          className="flex flex-col items-center justify-center text-gold font-semibold cursor-pointer border-0 bg-transparent"
+          className={`flex flex-col items-center justify-center font-semibold cursor-pointer border-0 bg-transparent transition-all ${
+            isActive("/portal/booking") ? "text-gold font-bold scale-105" : "text-gold hover:scale-105"
+          }`}
         >
           <Calendar className="w-6 h-6 text-gold" />
           <span className="text-[10px] mt-1">Book</span>
@@ -557,6 +568,7 @@ export default function Navbar() {
           href="/contact"
           icon={<Grid className="w-5 h-5" />}
           label="More"
+          active={isActive("/contact")}
         />
       </nav>
     </>
@@ -675,15 +687,19 @@ function BottomLink({
   href,
   icon,
   label,
+  active,
 }: {
   href: string;
   icon: React.ReactNode;
   label: string;
+  active: boolean;
 }) {
   return (
     <Link
       href={href}
-      className="flex flex-col items-center justify-center text-gray-500 hover:text-gold"
+      className={`flex flex-col items-center justify-center transition-all ${
+        active ? "text-gold font-bold scale-105" : "text-gray-500 hover:text-gold"
+      }`}
     >
       {icon}
       <span className="text-[10px] mt-1">{label}</span>

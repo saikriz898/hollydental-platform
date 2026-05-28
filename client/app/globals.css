@@ -1,26 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #0A1628;
-  --color-gold: #C9A96E;
-  --color-gold-dark: #A8844D;
-  --color-off-white: #F9FAFB;
-  --color-light-grey: #F3F4F6;
-  --color-border-custom: #E5E7EB;
+  --color-navy: #05264E;
+  --color-gold: #00ADEF;
+  --color-gold-dark: #008BCC;
+  --color-off-white: #F4F9FD;
+  --color-light-grey: #E8F3FC;
+  --color-border-custom: #D2E4F5;
   --color-placeholder-custom: #9CA3AF;
   --color-secondary-custom: #4B5563;
-  --color-primary-custom: #111827;
+  --color-primary-custom: #05264E;
   --color-success-custom: #059669;
   --color-warning-custom: #D97706;
   --color-danger-custom: #DC2626;
-  --color-info-custom: #2563EB;
+  --color-info-custom: #00ADEF;
 
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   
-  --shadow-card: 0 2px 12px rgba(0,0,0,0.06);
-  --shadow-gold-hover: 0 8px 32px rgba(201,169,110,0.2);
+  --shadow-card: 0 4px 20px rgba(5,38,78,0.05);
+  --shadow-gold-hover: 0 8px 32px rgba(0,173,239,0.2);
 
   --radius-card: 16px;
   --radius-button: 8px;
@@ -43,12 +43,12 @@ body {
 
 /* Brand-friendly text selection — readable on light and dark backgrounds */
 ::selection {
-  background-color: rgba(201, 169, 110, 0.35); /* gold @ 35% */
-  color: #0A1628; /* navy */
+  background-color: rgba(0, 173, 239, 0.25); /* sky blue @ 25% */
+  color: #05264E; /* navy */
 }
 ::-moz-selection {
-  background-color: rgba(201, 169, 110, 0.35);
-  color: #0A1628;
+  background-color: rgba(0, 173, 239, 0.25);
+  color: #05264E;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -56,23 +56,6 @@ h1, h2, h3, h4, h5, h6 {
   color: inherit;
 }
 
-/* Custom scrollbar for premium look */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #F9FAFB;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #C9A96E;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #A8844D;
-}
 
 /* Animation utilities */
 @keyframes fade-up {

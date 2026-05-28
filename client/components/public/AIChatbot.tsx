@@ -5,7 +5,6 @@ import { MessageSquare, X, Send, User } from "lucide-react";
 import { apiRequest } from "@/lib/api";
 import { CLINIC } from "@/lib/constants";
 import { useAuthStore } from "@/store/useAuthStore";
-import WhatsAppIcon from "@/components/common/WhatsAppIcon";
 
 interface Message {
   role: "user" | "model";
@@ -72,24 +71,7 @@ export default function AIChatbot() {
 
   return (
     <>
-      {/* WhatsApp quick button (prefilled message) */}
-      <button
-        onClick={() => {
-          const name = user?.patientProfile ? `${user.patientProfile.firstName || ""} ${user.patientProfile.lastName || ""}`.trim() : "";
-          const prefill = name
-            ? `Hi, my name is ${name}. I am contacting Hollyhill Dental regarding...` 
-            : `Hi, I found you on the Hollyhill Dental website and would like to enquire about...`;
-          const url = `${CLINIC.whatsapp}?text=${encodeURIComponent(prefill)}`;
-          window.open(url, "_blank");
-        }}
-        className="fixed bottom-6 left-6 z-50 w-12 h-12 rounded-full bg-[#25D366] hover:bg-opacity-95 text-white flex items-center justify-center shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none"
-        aria-label="Chat on WhatsApp"
-        title="Message us on WhatsApp"
-      >
-        <WhatsAppIcon className="w-5 h-5 text-white" />
-      </button>
-
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+      <div className="hidden lg:flex fixed bottom-20 lg:bottom-6 right-4 lg:right-6 z-50 flex flex-col items-end">
         {/* Chat Widget Panel */}
       {isOpen && (
         <div

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { CLINIC } from "@/lib/constants";
+import Logo from "@/components/public/Logo";
 
 /**
  * Premium intro splash. Shown once per browser session per intro version.
@@ -16,12 +16,8 @@ const INTRO_VERSION = "2"; // bump to force everyone to see a refreshed intro
 export default function Preloader() {
   const [hidden, setHidden] = useState(false);
   const [removed, setRemoved] = useState(false);
-  const startedRef = useRef(false);
 
   useEffect(() => {
-    if (startedRef.current) return; // guard against React strict-mode double-fire
-    startedRef.current = true;
-
     if (typeof window === "undefined") return;
 
     const isDev = process.env.NODE_ENV !== "production";
@@ -34,13 +30,12 @@ export default function Preloader() {
       return;
     }
 
-    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     const fadeTimer = window.setTimeout(() => setHidden(true), 1500);
     const removeTimer = window.setTimeout(() => {
       setRemoved(true);
-      document.body.style.overflow = prevOverflow;
+      document.body.style.overflow = "";
       try {
         window.sessionStorage.setItem(seenKey, "1");
       } catch {
@@ -51,7 +46,7 @@ export default function Preloader() {
     return () => {
       window.clearTimeout(fadeTimer);
       window.clearTimeout(removeTimer);
-      document.body.style.overflow = prevOverflow;
+      document.body.style.overflow = "";
     };
   }, []);
 
@@ -60,57 +55,73 @@ export default function Preloader() {
   return (
     <div
       aria-hidden
-      className={`fixed inset-0 z-[100] bg-navy text-white flex items-center justify-center transition-opacity duration-500 ease-out ${
+      className={`fixed inset-0 z-[100] bg-navy text-white flex items-center justify-center transition-opacity duration-700 ease-out ${
         hidden ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
-      {/* Ambient gold glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(201,169,110,0.18),transparent_55%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_80%,rgba(201,169,110,0.10),transparent_60%)]" />
+      {/* Ambient Moving Blur Blobs */}
+      <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] rounded-full bg-[#00ADEF]/10 blur-[90px] animate-[preloader-blob_8s_infinite_alternate]" />
+      <div className="absolute bottom-1/4 right-1/4 w-[250px] h-[250px] rounded-full bg-gold/10 blur-[80px] animate-[preloader-blob_10s_infinite_alternate-reverse_2s]" />
+      
+      {/* Grid overlay for texture */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.007)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.007)_1px,transparent_1px)] bg-[size:30px_30px] opacity-30" />
 
-      <div className="relative flex flex-col items-center gap-7 px-6 text-center">
-        {/* Logo emblem with rotating gold ring */}
-        <div className="relative w-28 h-28">
-          <span className="absolute inset-0 rounded-full border border-gold/20" />
-          <span className="absolute inset-0 rounded-full border-t-2 border-r-2 border-transparent border-t-gold border-r-gold/40 animate-[spin_2s_linear_infinite]" />
-          <span className="absolute inset-2 rounded-full border border-gold/15" />
-          <span className="absolute inset-3 rounded-full bg-white shadow-[0_8px_24px_-6px_rgba(201,169,110,0.5)] flex items-center justify-center overflow-hidden">
-            <Image
-              src="/logo.png"
-              alt={`${CLINIC.name} logo`}
-              width={72}
-              height={72}
-              priority
-              className="w-[78%] h-[78%] object-contain"
-            />
-          </span>
+      <div className="relative flex flex-col items-center gap-9 px-6 text-center z-10">
+        
+        {/* Transparent Logo Container */}
+        <div className="relative animate-[preloader-pulse_3s_infinite_ease-in-out] py-4">
+          <Logo size={96} theme="light" asLink={false} />
         </div>
 
-        <div className="space-y-2">
-          <span className="block text-[10px] uppercase tracking-[0.4em] font-semibold text-gold">
+        <div className="space-y-3">
+          <span className="inline-block text-[9px] uppercase tracking-[0.45em] font-bold text-gold bg-gold/10 px-4 py-1.5 rounded-full border border-gold/20">
             {CLINIC.taglineShort || "Smile Confidently"}
           </span>
-          <h1 className="font-serif text-2xl md:text-3xl font-bold tracking-tight">
+          <h1 className="font-serif text-3xl md:text-4xl font-bold tracking-tight text-white">
             {CLINIC.name}
           </h1>
-          <span className="block text-[11px] text-gray-400 max-w-xs">
+          <span className="block text-[11px] text-gray-400 max-w-xs font-light leading-relaxed">
             {CLINIC.tagline || "Creating Beautiful & Confident Smiles"}
           </span>
         </div>
 
-        {/* Loading bar */}
-        <div className="w-44 h-[2px] bg-white/10 rounded-full overflow-hidden">
-          <div className="h-full w-1/2 bg-gradient-to-r from-gold/0 via-gold to-gold/0 animate-[preloader-shimmer_1.2s_ease-in-out_infinite]" />
+        {/* Premium glowing loading bar */}
+        <div className="w-48 h-[2px] bg-white/5 rounded-full overflow-hidden relative shadow-[0_0_10px_rgba(201,169,110,0.1)]">
+          <div className="h-full w-2/3 bg-gradient-to-r from-transparent via-gold to-transparent absolute top-0 -translate-x-[120%] animate-[preloader-shimmer_1.8s_cubic-bezier(0.4,0,0.2,1)_infinite]" />
         </div>
       </div>
 
       <style jsx global>{`
         @keyframes preloader-shimmer {
           0% {
-            transform: translateX(-120%);
+            transform: translateX(-150%);
+          }
+          50% {
+            transform: translateX(150%);
           }
           100% {
-            transform: translateX(220%);
+            transform: translateX(150%);
+          }
+        }
+        @keyframes preloader-blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          50% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          100% {
+            transform: translate(-10px, 30px) scale(0.95);
+          }
+        }
+        @keyframes preloader-pulse {
+          0%, 100% {
+            transform: scale(1);
+            filter: drop-shadow(0 0 15px rgba(0, 173, 239, 0.05));
+          }
+          50% {
+            transform: scale(1.015);
+            filter: drop-shadow(0 0 25px rgba(0, 173, 239, 0.15));
           }
         }
       `}</style>

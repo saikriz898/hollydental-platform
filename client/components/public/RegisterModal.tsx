@@ -15,6 +15,7 @@ import {
   Sparkles,
   ChevronRight,
   ShieldAlert,
+  ArrowLeft,
 } from "lucide-react";
 import LoginOverlay from "@/components/common/LoginOverlay";
 
@@ -113,20 +114,36 @@ export default function RegisterModal() {
   const strength = getPasswordStrength();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-white md:bg-navy/40 md:backdrop-blur-sm flex flex-col md:items-center md:justify-center md:p-4 overflow-y-auto no-scrollbar">
       {loading && <LoginOverlay message="Creating your account..." />}
-      {/* Backdrop */}
+      {/* Backdrop (desktop only) */}
       <div
-        className="absolute inset-0 bg-navy/40 backdrop-blur-sm transition-opacity duration-300 animate-fade-in"
+        className="hidden md:block absolute inset-0 transition-opacity duration-300 animate-fade-in"
         onClick={closeRegisterModal}
       />
 
       {/* Light Modal Container */}
-      <div className="relative w-full max-w-[880px] max-h-[92vh] overflow-y-auto md:overflow-hidden no-scrollbar bg-white rounded-3xl shadow-2xl border border-gray-100 grid grid-cols-1 md:grid-cols-12 z-10 animate-fade-up">
-        {/* Close Button */}
+      <div className="relative w-full h-full md:h-auto min-h-screen md:min-h-0 md:max-w-[880px] md:max-h-[92vh] md:overflow-hidden bg-white md:rounded-3xl md:shadow-2xl md:border md:border-gray-100 grid grid-cols-1 md:grid-cols-12 z-10 animate-fade-up">
+        {/* Mobile Top Bar with Back Button */}
+        <div className="md:hidden px-6 pt-6 flex items-center justify-between border-b border-gray-50 bg-white z-20">
+          <button
+            onClick={closeRegisterModal}
+            className="flex items-center gap-1.5 text-gray-600 hover:text-navy font-semibold text-sm transition-colors py-2 focus:outline-none"
+          >
+            <ArrowLeft className="w-4 h-4 text-gold" />
+            <span>Back</span>
+          </button>
+          <img
+            src="/logo.png"
+            alt="Logo"
+            className="w-6 h-6 object-contain"
+          />
+        </div>
+        
+        {/* Desktop Close Button */}
         <button
           onClick={closeRegisterModal}
-          className="absolute top-4 right-4 p-2 rounded-full bg-gray-50 hover:bg-gray-100 text-gray-500 hover:text-navy transition-colors z-30 focus:outline-none border border-gray-100"
+          className="hidden md:block absolute top-4 right-4 p-2 rounded-full bg-gray-50 hover:bg-gray-100 text-gray-500 hover:text-navy transition-colors z-30 focus:outline-none border border-gray-100"
           aria-label="Close registration"
         >
           <X className="w-4 h-4" />
