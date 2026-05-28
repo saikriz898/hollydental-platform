@@ -1,6 +1,7 @@
 import { db } from "../config/db.js";
 import { users, services, blogPosts } from "./schema.js";
 import { eq } from "drizzle-orm";
+import bcrypt from "bcrypt";
 
 /**
  * Reference data the application depends on at runtime. We seed this at
@@ -91,6 +92,139 @@ const STARTER_BLOG_POSTS = [
     seoDescription:
       "Compare Invisalign with traditional braces — aesthetics, comfort, hygiene and treatment speed — at Hollyhill Dental Cork.",
   },
+  {
+    title: "The Complete Guide to Composite Bonding",
+    slug: "complete-guide-to-composite-bonding",
+    excerpt: "Learn how composite bonding can repair chipped, stained, or uneven teeth in a single visit without drilling.",
+    body: `<p>Composite bonding is one of our most popular cosmetic dentistry treatments at Hollyhill Dental. It offers a fast, non-invasive, and cost-effective way to transform your smile. Here is everything you need to know about the procedure.</p>
+<h3>What is Composite Bonding?</h3><p>It involves applying a tooth-colored composite resin to the surface of your teeth to reshape them, close gaps, or cover chips and discoloration. Dr. Roghay Alizadeh sculpts the resin by hand to match your surrounding teeth perfectly.</p>
+<h3>Key Benefits</h3>
+<ul>
+  <li><strong>Single appointment:</strong> Most bonding treatments are completed in just 1 to 2 hours.</li>
+  <li><strong>No tooth preparation:</strong> Unlike porcelain veneers, composite bonding requires little to no removal of natural enamel.</li>
+  <li><strong>Pain-free:</strong> In most cases, no injections or drilling are necessary.</li>
+</ul>
+<h3>How Long Does It Last?</h3>
+<p>Typically, composite bonding lasts between 5 to 8 years. Over time, the resin can stain or wear down, but it can be easily repaired or polished during your regular checkup.</p>
+<p>Ready to transform your smile? Book a consultation with us today.</p>`,
+    category: "Cosmetic Dentistry",
+    tags: "bonding, cosmetic, composite",
+    featuredImageUrl: "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?auto=format&fit=crop&q=80&w=1200",
+    seoTitle: "The Complete Guide to Composite Bonding | Hollyhill Dental",
+    seoDescription: "Learn how composite bonding can repair chipped or uneven teeth in a single visit in Cork. Read our expert guide.",
+  },
+  {
+    title: "What to Do in a Dental Emergency",
+    slug: "what-to-do-in-dental-emergency",
+    excerpt: "Knocked-out tooth, severe toothache, or lost crown? Our Cork dental team explains the exact steps to save your tooth.",
+    body: `<p>Dental emergencies can be stressful, but knowing how to react in the first few minutes can mean the difference between saving and losing a tooth. At Hollyhill Dental, we reserve emergency slots daily for patients in urgent need.</p>
+<h3>1. Knocked-Out Tooth</h3><p>Handle the tooth only by the crown (the top part), not the root. Rinse it gently with water or milk, and if possible, try to place it back in the socket. If not, store it in a container of milk and head to our clinic immediately.</p>
+<h3>2. Severe Toothache</h3><p>Rinse your mouth with warm water and use dental floss to remove any trapped food. Avoid placing aspirin directly on the gums, as this can burn the tissue. Take over-the-counter pain relief and call us to be seen.</p>
+<h3>3. Lost Crown or Filling</h3><p>Keep the crown safe if it has come off. You can use temporary dental cement from a pharmacy to temporarily place it back in mouth, but avoid using superglue. Schedule an appointment to get it professionally bonded.</p>
+<p>If you have an active dental emergency in Cork, call us immediately at <strong>+353 21 430 3072</strong>.</p>`,
+    category: "Emergency Dental Care",
+    tags: "emergency, pain, toothache",
+    featuredImageUrl: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=1200",
+    seoTitle: "What to Do in a Dental Emergency | Hollyhill Dental Cork",
+    seoDescription: "Find out what to do for a knocked-out tooth or severe toothache. Cork's emergency dental team explains.",
+  },
+  {
+    title: "Prepare Your Child for Their First Dentist Visit",
+    slug: "prepare-child-first-dentist-visit",
+    excerpt: "Make your child's first dental checkup a positive, fear-free experience with these practical tips.",
+    body: `<p>A child's first visit to the dentist sets the tone for their future oral health. At Hollyhill Dental, we focus on creating a fun, friendly, and completely fear-free environment for our pediatric patients.</p>
+<h3>Start early</h3><p>We recommend bringing your child in as soon as their first baby teeth emerge, or by their first birthday. This helps them get used to the sights and sounds of the clinic.</p>
+<h3>Keep it positive</h3><p>Avoid using words like 'pain', 'hurt', or 'needles'. Explain that the dentist is a friendly helper who counts their teeth and keeps them clean.</p>
+<h3>Roleplay at home</h3><p>Practice counting each other's teeth in a mirror with a small flashlight. This makes the actual dental exam feel like a familiar game.</p>
+<p>Book your child's pediatric checkup today and let us help them build a healthy smile for life.</p>`,
+    category: "Pediatric Dentistry",
+    tags: "child, pediatric, checkup",
+    featuredImageUrl: "https://images.unsplash.com/photo-1484981138541-3d074aa97716?auto=format&fit=crop&q=80&w=1200",
+    seoTitle: "Prepare Your Child for Their First Dentist Visit | Hollyhill Dental",
+    seoDescription: "Practical advice on making your child's first dental checkup positive and stress-free at Hollyhill Dental Cork.",
+  },
+  {
+    title: "Gum Disease: Prevention, Symptoms, and Treatment",
+    slug: "gum-disease-prevention-symptoms-treatment",
+    excerpt: "Why healthy gums are the foundation of a beautiful smile, and how to prevent gingivitis from turning into periodontitis.",
+    body: `<p>Many people focus entirely on their teeth, but your gums are the support structure for your smile. Gum disease is the leading cause of tooth loss in adults, but it is entirely preventable.</p>
+<h3>Gingivitis vs. Periodontitis</h3><p>Gingivitis is the earliest stage of gum disease, characterized by red, swollen gums that bleed when you brush. It is completely reversible with professional cleaning. If left untreated, it can progress to periodontitis, which damages the bone supporting your teeth, leading to loose teeth.</p>
+<h3>How to Prevent It</h3>
+<ul>
+  <li>Brush twice daily with a fluoride toothpaste.</li>
+  <li>Floss daily to remove plaque from between the teeth.</li>
+  <li>Book professional scaling and polishing twice a year.</li>
+</ul>
+<p>Have your gums been bleeding? Book an Exam, Scale & Polish appointment with us today.</p>`,
+    category: "Gum Health & Periodontal Care",
+    tags: "gum health, plaque, hygiene",
+    featuredImageUrl: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&q=80&w=1200",
+    seoTitle: "Gum Disease Prevention & Treatment | Hollyhill Dental Cork",
+    seoDescription: "Learn the symptoms of gum disease and how to prevent it. Scale and polish services available at Hollyhill Dental.",
+  },
+  {
+    title: "What Is Root Canal Treatment and Why Is It Pain-Free?",
+    slug: "root-canal-treatment-pain-free",
+    excerpt: "Demystifying root canal therapy. Learn why modern rotary endodontics make this tooth-saving procedure simple and comfortable.",
+    body: `<p>The words 'root canal' often cause unnecessary anxiety. Modern dental techniques and rotary endodontics have made root canal treatment as simple and pain-free as a standard filling. Here is what actually happens.</p>
+<h3>Why is it needed?</h3><p>When decay reaches the inner pulp of the tooth, it causes inflammation and severe pain. Root canal therapy removes the infected pulp, cleans the canals, and seals the tooth to save it from extraction.</p>
+<h3>Modern technology makes it simple</h3><p>With precise local anesthetics and high-speed digital mapping, you won't feel anything during the procedure. We save your natural tooth, which maintains your natural bite structure.</p>
+<p>If you're experiencing deep tooth pain, don't delay. Book a consultation today.</p>`,
+    category: "Root Canal Treatment",
+    tags: "root canal, endodontics, pain relief",
+    featuredImageUrl: "https://images.unsplash.com/photo-1629909615184-74f495363b67?auto=format&fit=crop&q=80&w=1200",
+    seoTitle: "Modern Pain-Free Root Canal Treatment | Hollyhill Dental",
+    seoDescription: "Demystifying root canals. Learn why modern endodontic therapy at Hollyhill Dental in Cork is comfortable and safe.",
+  },
+  {
+    title: "How to Maintain Your Teeth Whitening Results",
+    slug: "maintain-teeth-whitening-results",
+    excerpt: "Tips on keeping your smile bright after professional teeth whitening. The 'white diet' explained.",
+    body: `<p>Congratulations on your new, brighter smile! Professional teeth whitening can brighten your teeth up to 8 shades, but maintaining those results requires some care. Here are our top tips.</p>
+<h3>The 'White Diet'</h3><p>For the first 48 hours post-whitening, the pores of your enamel are open and vulnerable to staining. Avoid coffee, tea, red wine, curry, and soy sauce. Opt for light-colored foods like chicken, pasta, rice, and milk.</p>
+<h3>Daily maintenance habits</h3>
+<ul>
+  <li>Use a straw when drinking colored beverages.</li>
+  <li>Rinse your mouth with water immediately after eating staining foods.</li>
+  <li>Brush with a gentle whitening toothpaste to prevent surface stains from building up.</li>
+</ul>
+<p>Get in touch for home touch-up kits to keep your smile glowing all year round.</p>`,
+    category: "Teeth Whitening",
+    tags: "whitening, aftercare, smile care",
+    featuredImageUrl: "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&q=80&w=1200",
+    seoTitle: "How to Maintain Teeth Whitening Results | Hollyhill Dental",
+    seoDescription: "Keep your teeth white after your treatment. Learn the best post-whitening care tips from our Cork cosmetic dentists.",
+  },
+  {
+    title: "Dental Implants vs. Bridges: Which Is Right?",
+    slug: "dental-implants-vs-bridges",
+    excerpt: "Compare the long-term benefits, costs, and procedure steps of dental implants and fixed bridges for replacing missing teeth.",
+    body: `<p>Replacing missing teeth is crucial for maintaining your bite alignment and facial structure. The two main solutions are dental implants and fixed bridges. Here is how they compare.</p>
+<h3>Dental Implants</h3><p>Implants replace both the root and the crown. A titanium post is surgically placed in the jaw, fusing with the bone. It behaves like a natural tooth and doesn't require any alteration of adjacent teeth.</p>
+<h3>Dental Bridges</h3><p>A bridge uses adjacent healthy teeth (anchors) to hold a replacement tooth in the gap. It is non-surgical and completed in 2 visits, but it requires preparing the adjacent teeth.</p>
+<h3>Long-Term Value</h3><p>While implants have a higher initial cost, they can last a lifetime, making them the most cost-effective and premium solution in the long run.</p>
+<p>Book a consultation to map out your restorative treatment plan.</p>`,
+    category: "Dental Implants",
+    tags: "implants, bridges, replacement",
+    featuredImageUrl: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&q=80&w=1200",
+    seoTitle: "Dental Implants vs. Fixed Bridges | Hollyhill Dental Cork",
+    seoDescription: "Compare implants and bridges for replacing missing teeth. Discuss options with Dr. Roghay Alizadeh in Cork.",
+  },
+  {
+    title: "Is Invisalign Right for Adults?",
+    slug: "invisalign-right-for-adults",
+    excerpt: "Everything adults need to know about clear aligner orthodontic treatment, from daily wear to results.",
+    body: `<p>It's never too late to get the straight smile you've always wanted. Invisalign orthodontic clear aligners are highly popular with adults because they are comfortable and virtually invisible. Here is what to expect.</p>
+<h3>Virtually Invisible</h3><p>You can attend business meetings and social events without anyone knowing you're in orthodontic treatment.</p>
+<h3>Removable & Convenient</h3><p>Remove your aligners to eat your favorite foods and brush your teeth normally. No food restrictions like traditional metal braces!</p>
+<h3>Treatment Speed</h3><p>With Invisalign Go, simple cases can be completed in as little as 6 to 9 months.</p>
+<p>Book a digital smile consultation today and view a 3D preview of your straight smile before you start.</p>`,
+    category: "Orthodontics & Braces",
+    tags: "invisalign, braces, orthodontics",
+    featuredImageUrl: "https://images.unsplash.com/photo-1513224506828-ac7c9880c101?auto=format&fit=crop&q=80&w=1200",
+    seoTitle: "Invisalign Clear Aligners for Adults | Hollyhill Dental Cork",
+    seoDescription: "Adult orthodontics made simple. Learn how Invisalign aligners can straighten your smile comfortably.",
+  },
 ];
 
 export const seedDatabase = async () => {
@@ -120,13 +254,28 @@ export const seedDatabase = async () => {
     }
 
     // 2. Starter blog posts — only if a doctor/admin exists to author them.
-    // Patient & demo data is intentionally NOT seeded here. Run
-    // `npm run seed:doctor` once to provision the clinic admin.
-    const admin = await db
+    // We now automatically seed a default admin user if none exists so that the
+    // blog posts can be seeded automatically on startup.
+    let admin = await db
       .select({ id: users.id })
       .from(users)
       .where(eq(users.role, "admin"))
       .limit(1);
+
+    if (admin.length === 0) {
+      console.log("[seed] No admin account found. Automatically provisioning default doctor admin...");
+      const defaultEmail = "doctor@hollyhilldental.ie";
+      const passwordHash = await bcrypt.hash("Admin1234!", 10);
+      const [newAdmin] = await db.insert(users).values({
+        email: defaultEmail,
+        passwordHash,
+        role: "admin",
+        isActive: true,
+        mustChangePassword: true,
+      }).returning({ id: users.id });
+      console.log(`[seed] Created default admin account: ${defaultEmail}`);
+      admin = [newAdmin];
+    }
 
     if (admin.length > 0) {
       const adminId = admin[0].id;
@@ -150,10 +299,6 @@ export const seedDatabase = async () => {
       if (postsAdded > 0) {
         console.log(`[seed] Inserted ${postsAdded} starter blog post(s).`);
       }
-    } else {
-      console.log(
-        "[seed] No admin account yet — skipping blog post seed. Run `npm run seed:doctor` to create the clinic admin."
-      );
     }
 
     console.log("[seed] Reference data ready.");

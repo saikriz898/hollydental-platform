@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   // Hide the floating dev indicator that ships with Next.js dev mode.
@@ -12,6 +13,9 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "res.cloudinary.com" },
       { protocol: "https", hostname: "images.unsplash.com" },
     ],
+  },
+  turbopack: {
+    root: path.resolve(__dirname, ".."),
   },
 };
 

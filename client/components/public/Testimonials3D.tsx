@@ -41,6 +41,27 @@ const REVIEWS: Review[] = [
     date: "February 2026",
   },
   {
+    name: "John McCarthy",
+    treatment: "General Dentistry",
+    text: "A routine examination that was thorough and informative. Dr. Roghay explained what she was doing at all times. Professional team.",
+    rating: 5,
+    date: "January 2026",
+  },
+  {
+    name: "Fiona Roche",
+    treatment: "Dental Crowns",
+    text: "I was extremely nervous about getting dental crowns, but the staff was patient and put me at ease. The crown fits perfectly and looks completely real.",
+    rating: 5,
+    date: "February 2026",
+  },
+  {
+    name: "Sinead O'Sullivan",
+    treatment: "Hygiene & Cleaning",
+    text: "Absolutely wonderful clinic. The hygiene cleaning was so thorough and didn't hurt at all. My teeth feel brand new.",
+    rating: 5,
+    date: "May 2026",
+  },
+  {
     name: "Emma Crowley",
     treatment: "Emergency Root Canal",
     text: "I was in agony with a toothache and they got me in on the same day. Root canal was painless. Incredible relief. Thank you!",
@@ -48,19 +69,19 @@ const REVIEWS: Review[] = [
     date: "December 2025",
   },
 ];
-
+ 
 export default function Testimonials3D() {
   const [active, setActive] = useState(0);
   const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const dragStartRef = useRef<number | null>(null);
-
+ 
   useEffect(() => {
     if (isHovered || exitDirection) return;
     const interval = setInterval(() => {
       handleNext();
-    }, 4500);
+    }, 3000);
     return () => clearInterval(interval);
   }, [active, isHovered, exitDirection]);
 
@@ -210,13 +231,13 @@ export default function Testimonials3D() {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 md:px-8 space-y-10">
-      {/* 3D Stack Viewport */}
-      <div className="relative w-full max-w-2xl mx-auto h-[320px] sm:h-[280px] md:h-[260px]">
+      {/* 3D Stack Viewport with breathing room for the arrow buttons */}
+      <div className="relative w-full max-w-2xl mx-auto h-[320px] sm:h-[280px] md:h-[260px] px-12 md:px-16">
         {/* Navigation Arrow Left */}
         <button
           onClick={handlePrev}
           disabled={!!exitDirection}
-          className="absolute left-[-20px] md:left-[-60px] top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-gold hover:text-navy hover:scale-105 active:scale-95 transition-all z-40 focus:outline-none disabled:opacity-50"
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/95 backdrop-blur border border-gold/40 ring-1 ring-black/5 flex items-center justify-center text-navy hover:bg-gold hover:border-gold hover:text-navy hover:scale-105 active:scale-95 transition-all z-50 focus:outline-none disabled:opacity-40 shadow-[0_8px_20px_-8px_rgba(10,22,40,0.45)]"
           aria-label="Previous testimonial"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -240,7 +261,7 @@ export default function Testimonials3D() {
               <div
                 key={idx}
                 style={getCardStyle(idx)}
-                className={`absolute inset-0 w-full h-full bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/15 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-xl transition-all duration-300 origin-bottom transform-style-3d`}
+                className="absolute inset-0 w-full h-full bg-gradient-to-br from-navy via-[#0c1b2e] to-[#040e1a] border border-gold/25 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.45)] transition-all duration-300 origin-bottom transform-style-3d"
               >
                 {/* Quote Mark Icon in Background */}
                 <span className="absolute top-2 left-4 text-7xl sm:text-8xl text-gold/10 font-serif pointer-events-none select-none">
@@ -290,7 +311,7 @@ export default function Testimonials3D() {
         <button
           onClick={handleNext}
           disabled={!!exitDirection}
-          className="absolute right-[-20px] md:right-[-60px] top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-gold hover:text-navy hover:scale-105 active:scale-95 transition-all z-40 focus:outline-none disabled:opacity-50"
+          className="absolute right-0 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/95 backdrop-blur border border-gold/40 ring-1 ring-black/5 flex items-center justify-center text-navy hover:bg-gold hover:border-gold hover:text-navy hover:scale-105 active:scale-95 transition-all z-50 focus:outline-none disabled:opacity-40 shadow-[0_8px_20px_-8px_rgba(10,22,40,0.45)]"
           aria-label="Next testimonial"
         >
           <ChevronRight className="w-5 h-5" />
@@ -298,7 +319,7 @@ export default function Testimonials3D() {
       </div>
 
       {/* Dots Navigation */}
-      <div className="flex justify-center gap-2 pt-2">
+      <div className="flex justify-center gap-2 pt-4 pb-8 md:pb-2">
         {REVIEWS.map((_, dotIdx) => (
           <button
             key={dotIdx}
@@ -321,7 +342,7 @@ export default function Testimonials3D() {
             className={`h-2 rounded-full transition-all duration-300 focus:outline-none ${
               dotIdx === active
                 ? "w-8 bg-gold"
-                : "w-2 bg-white/20 hover:bg-white/40"
+                : "w-2 bg-navy/15 hover:bg-navy/35"
             }`}
             aria-label={`Go to testimonial slide ${dotIdx + 1}`}
           />

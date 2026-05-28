@@ -89,6 +89,47 @@ h1, h2, h3, h4, h5, h6 {
   animation: shimmer 1.5s infinite;
 }
 
+/* Preloader animations */
+@keyframes preloader-shimmer {
+  0% { transform: translateX(-150%); }
+  50% { transform: translateX(150%); }
+  100% { transform: translateX(150%); }
+}
+.animate-preloader-shimmer {
+  animation: preloader-shimmer 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes preloader-blob {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(30px, -50px) scale(1.1); }
+  100% { transform: translate(-10px, 30px) scale(0.95); }
+}
+.animate-preloader-blob {
+  animation: preloader-blob 8s infinite alternate;
+}
+.animate-preloader-blob-2 {
+  animation: preloader-blob 10s infinite alternate-reverse 2s;
+}
+
+@keyframes preloader-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 15px rgba(0, 173, 239, 0.05));
+  }
+  50% {
+    transform: scale(1.015);
+    filter: drop-shadow(0 0 25px rgba(0, 173, 239, 0.15));
+  }
+}
+.animate-preloader-pulse {
+  animation: preloader-pulse 3s infinite ease-in-out;
+}
+
+/* Hide the floating AI chatbot whenever the mobile drawer is open. */
+body[data-mobile-menu-open="1"] [data-ai-chatbot] {
+  display: none !important;
+}
+
 /* Hide scrollbar utility for clean, premium modal interfaces */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

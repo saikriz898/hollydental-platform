@@ -12,6 +12,7 @@ import {
   Flame,
   Search,
   Clock,
+  Smile,
 } from "lucide-react";
 
 const CATEGORIES = [
@@ -24,7 +25,7 @@ const CATEGORIES = [
   {
     key: "cosmetic",
     label: "Cosmetic Procedures",
-    icon: Sparkles,
+    icon: Smile,
     desc: "Aesthetic bonding, whitening, veneers, and smile makeovers.",
   },
   {

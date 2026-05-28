@@ -59,6 +59,24 @@ export default function PremiumBookingCTA({
               {secondaryBtnLabel}: {CLINIC.phone}
             </span>
           </a>
+
+          <a
+            href={CLINIC.whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto border border-emerald-500/35 hover:border-emerald-500 hover:bg-emerald-500/10 text-emerald-400 font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-4 h-4 text-emerald-400 shrink-0"
+            >
+              <path d="M12 .5C5.65.5.5 5.65.5 12c0 2.11.55 4.08 1.51 5.82L.5 23.5l5.9-1.55A11.45 11.45 0 0012 23.5C18.35 23.5 23.5 18.35 23.5 12S18.35.5 12 .5zm0 20c-1.88 0-3.66-.5-5.2-1.4L4 20l.97-2.3A8.5 8.5 0 013.5 12 8.5 8.5 0 0120.5 12 8.5 8.5 0 0112 20.5z" />
+              <path d="M17.6 14.2c-.3-.15-1.78-.88-2.06-.98-.28-.1-.48-.15-.68.15-.2.3-.78.98-.95 1.18-.17.2-.34.22-.63.075-.3-.15-1.27-.47-2.42-1.48-.9-.8-1.5-1.8-1.68-2.1-.17-.28-.018-.43.12-.57.12-.12.28-.3.42-.45.14-.15.18-.25.28-.42.1-.17.05-.32-.025-.47-.075-.15-.66-1.6-.9-2.2-.24-.57-.48-.5-.66-.5-.17 0-.37-.025-.57-.025-.2 0-.52.075-.8.35-.28.28-1.05 1.03-1.05 2.5s1.08 2.9 1.23 3.1c.15.2 2.12 3.25 5.14 4.55 3.02 1.3 3.02.87 3.57.82.55-.05 1.78-.73 2.03-1.44.25-.7.25-1.3.175-1.44-.075-.15-.28-.23-.58-.38z" />
+            </svg>
+            <span>WhatsApp</span>
+          </a>
         </div>
       </div>
     </div>

@@ -43,8 +43,8 @@ export default function GalleryPage() {
       category: "smile-design",
       treatmentName: "Digital Smile Makeover",
       initials: "J.S.",
-      before: "/image_copy_3.png",
-      after: "/image_copy_3.png",
+      before: "/image-js-before.png",
+      after: "/image-js-after.png",
     },
     {
       category: "whitening",

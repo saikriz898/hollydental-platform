@@ -284,6 +284,8 @@ export default function PricingPage() {
                       <td className="px-5 py-4 text-right text-navy font-bold whitespace-nowrap align-top">
                         {s.priceFrom === 0 ? (
                           <span className="text-emerald-600">Free</span>
+                        ) : s.priceFrom === s.priceTo ? (
+                          <>&euro;{s.priceFrom}</>
                         ) : (
                           <>&euro;{s.priceFrom} – &euro;{s.priceTo}</>
                         )}

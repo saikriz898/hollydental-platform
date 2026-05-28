@@ -14,6 +14,7 @@ import {
   Instagram, 
   Facebook, 
   MessageSquare,
+  MessageCircle,
   ShieldCheck,
   Star
 } from "lucide-react";
@@ -253,6 +254,18 @@ export default function Footer() {
                   <Phone className="w-4 h-4" />
                 </div>
                 <span className="font-semibold">{CLINIC.phone}</span>
+              </a>
+
+              <a
+                href={CLINIC.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 hover:text-emerald-400 text-emerald-400/90 transition-colors group"
+              >
+                <div className="w-7 h-7 rounded bg-white/[0.03] border border-white/10 flex items-center justify-center text-emerald-400 shrink-0 group-hover:border-emerald-400 transition-colors">
+                  <MessageCircle className="w-4 h-4 fill-emerald-400/10" />
+                </div>
+                <span className="font-semibold">{CLINIC.whatsappDisplay} (WhatsApp)</span>
               </a>
 
               <a

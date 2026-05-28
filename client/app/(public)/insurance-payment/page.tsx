@@ -51,7 +51,7 @@ export default function InsurancePaymentPage() {
           </p>
           <ul className="space-y-2 text-xs text-gray-500 pl-4 list-disc">
             <li>**One Free Dental Examination** per calendar year.</li>
-            <li>**Subsidized Cleaning (Scale & Polish)** - Only €15 charge (saving €55 off standard price).</li>
+            <li>**Subsidized Cleaning (Scale & Polish)** - Only €15 charge (saving €45 off standard price).</li>
             <li>We check your PPSN eligibility instantly in the clinic.</li>
           </ul>
         </div>

@@ -75,7 +75,10 @@ export default function PortalAIChatbot() {
   };
 
   return (
-    <div className="fixed bottom-20 xl:bottom-6 right-4 xl:right-6 z-40 flex flex-col items-end pointer-events-none">
+    <div
+      data-ai-chatbot
+      className="fixed bottom-20 xl:bottom-6 right-4 xl:right-6 z-40 flex flex-col items-end pointer-events-none"
+    >
       {open && (
         <div className="hidden lg:flex pointer-events-auto bg-white rounded-2xl border border-gray-100 shadow-2xl flex-col overflow-hidden w-[92vw] sm:w-[380px] h-[70vh] md:h-[520px] mb-3">
           <header className="bg-navy text-white p-4 flex items-center justify-between border-b border-gold/20">

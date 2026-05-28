@@ -10,6 +10,7 @@ import {
   Clock,
   HelpCircle,
   Phone,
+  MessageSquare,
   Sparkles,
   ShieldCheck,
   Smile,
@@ -86,22 +87,30 @@ const FAQS = [
 function clinicalImageFor(slug: string) {
   switch (slug) {
     case "teeth-whitening":
-      return { img: "/image_copy_4.png", initials: "R.W." };
+      return { before: "/image_copy_4.png", after: "/image_copy_4.png", initials: "R.W." };
     case "composite-bonding":
-      return { img: "/image_copy_5.png", initials: "P.K." };
+    case "composite-veneers":
+      return { before: "/image_copy_5.png", after: "/image_copy_5.png", initials: "P.K." };
     case "veneers":
-      return { img: "/image_copy.png", initials: "A.C." };
+      return { before: "/image_copy.png", after: "/image_copy.png", initials: "A.C." };
     case "invisalign":
+    case "invisalign-go-single":
+    case "invisalign-go-double":
+    case "invisalign-full":
     case "full-smile-makeovers":
-      return { img: "/image_copy_2.png", initials: "L.D." };
+      return { before: "/image_copy_2.png", after: "/image_copy_2.png", initials: "L.D." };
     case "smile-design":
     case "digital-smile-consultation":
     case "dental-crowns":
     case "dental-bridges":
     case "dentures":
-      return { img: "/image_copy_3.png", initials: "J.S." };
+      return { before: "/image-js-before.png", after: "/image-js-after.png", initials: "J.S." };
+    case "root-canal":
+    case "root-canal-canine":
+    case "root-canal-premolar":
+    case "root-canal-molar":
     default:
-      return { img: "/image.png", initials: "M.H." };
+      return { before: "/image.png", after: "/image.png", initials: "M.H." };
   }
 }
 
@@ -134,7 +143,12 @@ export default async function ServiceDetailPage({ params }: PageProps) {
               <ArrowLeft className="w-3.5 h-3.5" /> All treatments
             </Link>
             <span className="inline-flex items-center gap-1.5 text-[10px] uppercase font-semibold tracking-widest text-gold bg-white/5 border border-gold/30 px-3 py-1 rounded-full">
-              <Sparkles className="w-3 h-3" /> {service.category} Dentistry
+              {service.category === "cosmetic" ? (
+                <Smile className="w-3.5 h-3.5" />
+              ) : (
+                <Sparkles className="w-3.5 h-3.5" />
+              )}
+              {service.category} Dentistry
             </span>
             <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.05]">
               {service.name}
@@ -169,13 +183,21 @@ export default async function ServiceDetailPage({ params }: PageProps) {
               >
                 <Phone className="w-4 h-4" /> Call {CLINIC.phone}
               </a>
+              <a
+                href={CLINIC.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border border-emerald-500/25 hover:border-emerald-500 hover:text-emerald-400 text-white font-semibold text-sm px-6 py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <MessageSquare className="w-4 h-4 text-emerald-400" /> WhatsApp
+              </a>
             </div>
           </div>
 
           <div className="lg:col-span-5 flex justify-center">
-            <div className="relative w-full max-w-[380px] aspect-[4/5] rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+            <div className="relative w-full max-w-[440px] aspect-[4/5] rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
               <img
-                src={photo.img}
+                src={photo.after}
                 alt={`${service.name} clinical example`}
                 className="w-full h-full object-cover"
               />
@@ -234,8 +256,8 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                 Procedural transformation
               </span>
               <BeforeAfterSlider
-                beforeImage={photo.img}
-                afterImage={photo.img}
+                beforeImage={photo.before}
+                afterImage={photo.after}
                 treatmentName={service.name}
                 initials={photo.initials}
               />
@@ -306,6 +328,8 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                 <td className="px-5 py-4 text-right text-navy font-bold whitespace-nowrap">
                   {service.priceFrom === 0 ? (
                     <span className="text-emerald-600">Free</span>
+                  ) : service.priceFrom === service.priceTo ? (
+                    <>&euro;{service.priceFrom}</>
                   ) : (
                     <>&euro;{service.priceFrom} – &euro;{service.priceTo}</>
                   )}
@@ -404,6 +428,14 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                 className="border border-white/25 hover:border-gold hover:text-gold text-white font-semibold text-sm px-7 py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <Phone className="w-4 h-4" /> Call {CLINIC.phone}
+              </a>
+              <a
+                href={CLINIC.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border border-emerald-500/25 hover:border-emerald-500 hover:text-emerald-400 text-white font-semibold text-sm px-7 py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <MessageSquare className="w-4 h-4 text-emerald-400" /> WhatsApp
               </a>
             </div>
           </div>

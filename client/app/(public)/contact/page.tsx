@@ -123,13 +123,19 @@ export default function ContactPage() {
       </section>
 
       {/* CONTACT METHODS STRIP */}
-      <section className="-mt-10 relative z-10 max-w-6xl mx-auto px-4 md:px-8">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-card grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
+      <section className="-mt-10 relative z-10 max-w-7xl mx-auto px-4 md:px-8">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-card grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
           <ContactMethod
             icon={<Phone className="w-4 h-4 text-gold" />}
             label="Phone"
             value={CLINIC.phone}
             href={CLINIC.phoneHref}
+          />
+          <ContactMethod
+            icon={<MessageSquare className="w-4 h-4 text-emerald-500" />}
+            label="WhatsApp"
+            value={CLINIC.whatsappDisplay}
+            href={CLINIC.whatsapp}
           />
           <ContactMethod
             icon={<Mail className="w-4 h-4 text-gold" />}
@@ -438,6 +444,14 @@ export default function ContactPage() {
                 className="inline-flex items-center gap-1.5 bg-navy hover:bg-gray-800 text-white font-semibold text-xs px-4 py-2 rounded-lg transition-colors"
               >
                 <Phone className="w-3.5 h-3.5" /> {CLINIC.phone}
+              </a>
+              <a
+                href={CLINIC.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-4 py-2 rounded-lg transition-colors"
+              >
+                <MessageSquare className="w-3.5 h-3.5" /> WhatsApp: {CLINIC.whatsappDisplay}
               </a>
             </div>
           </div>

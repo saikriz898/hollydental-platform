@@ -57,7 +57,7 @@ We offer premium in-chair power whitening (achieving results in 1 hour) as well 
       beforeImage="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=500"
       afterImage="https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&q=80&w=500"
       durationMins={60}
-      priceFrom={250}
+      priceFrom={199}
     />
   );
 }

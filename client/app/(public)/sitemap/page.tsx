@@ -34,6 +34,7 @@ export default function SitemapPage() {
           <ul className="space-y-2 text-gray-500 font-medium">
             <li><Link href="/" className="hover:text-gold transition-colors">Homepage</Link></li>
             <li><Link href="/about" className="hover:text-gold transition-colors">About Story</Link></li>
+            <li><Link href="/dr-roghay-alizadeh" className="hover:text-gold transition-colors">Dr. Roghay Alizadeh Bio</Link></li>
             <li><Link href="/services" className="hover:text-gold transition-colors">Services Overview</Link></li>
             <li className="pt-2 font-bold text-navy">Individual Treatments:</li>
             {SERVICES.map((s) => (
