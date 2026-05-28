@@ -3,19 +3,25 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { CLINIC } from "@/lib/constants";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface LogoProps {
   /** "full" shows mark + wordmark, "icon" shows the mark only. */
   variant?: "full" | "icon";
   /** Color theme — light is for dark backgrounds, dark is for light backgrounds. */
   theme?: "dark" | "light";
-  /** Render as a link to "/" (default true). Set false when used inside other Links. */
+  /** Render as a link (default true). Set false when used inside other Links. */
   asLink?: boolean;
   className?: string;
   /** Pixel size of the logo mark. Defaults to 36. */
   size?: number;
   /** Show the small uppercase tagline under the wordmark. */
   showTagline?: boolean;
+  /**
+   * Override the link target. By default the logo points home for guests
+   * and to the role-aware dashboard for signed-in users.
+   */
+  href?: string;
 }
 
 export default function Logo({
@@ -25,7 +31,9 @@ export default function Logo({
   className = "",
   size = 36,
   showTagline = false,
+  href,
 }: LogoProps) {
+  const { user } = useAuthStore();
   const [processedSrc, setProcessedSrc] = useState<string>("");
   const [aspectRatio, setAspectRatio] = useState<number>(1.41);
 
@@ -153,8 +161,19 @@ export default function Logo({
     return <span className={wrapperClass}>{inner}</span>;
   }
 
+  // Role-aware destination: an explicit `href` wins, otherwise signed-in
+  // users go straight to their dashboard so clicking the brand mark from
+  // anywhere never bounces them out of their authenticated area.
+  const destination =
+    href ||
+    (user
+      ? user.role === "admin"
+        ? "/admin/dashboard"
+        : "/portal/dashboard"
+      : "/");
+
   return (
-    <Link href="/" className={wrapperClass} aria-label={CLINIC.name}>
+    <Link href={destination} className={wrapperClass} aria-label={CLINIC.name}>
       {inner}
     </Link>
   );

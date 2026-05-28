@@ -48,8 +48,7 @@ const STARTER_BLOG_POSTS = [
 <p>If any of these resonate, please call <strong>+353 21 430 3072</strong> or book online.</p>`,
     category: "Preventive Dentistry",
     tags: "checkup, sensitivity, gum health",
-    featuredImageUrl:
-      "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?auto=format&fit=crop&q=80&w=1200",
+    featuredImageUrl: "/dentist-mirror.png",
     seoTitle: "7 Signs You May Need a Dental Checkup | Hollyhill Dental",
     seoDescription:
       "Discover seven warning signs from sensitivity to bleeding gums that mean it's time to book a checkup at Hollyhill Dental in Cork.",
@@ -66,8 +65,7 @@ const STARTER_BLOG_POSTS = [
 <p>Curious if whitening suits you? Book a free shade consultation with Dr. Roghay Alizadeh today.</p>`,
     category: "Cosmetic Dentistry",
     tags: "whitening, cosmetic, smile",
-    featuredImageUrl:
-      "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&q=80&w=1200",
+    featuredImageUrl: "/image_copy_4.png",
     seoTitle: "Benefits of Professional Teeth Whitening | Hollyhill Dental",
     seoDescription:
       "Learn why clinical whitening is safer and longer-lasting than retail strips. Cork's Hollyhill Dental explains the science behind the smile.",
@@ -86,8 +84,7 @@ const STARTER_BLOG_POSTS = [
 <p>Not sure which is right for you? Book a digital smile consultation and we'll model both options.</p>`,
     category: "Orthodontics",
     tags: "invisalign, braces, alignment",
-    featuredImageUrl:
-      "https://images.unsplash.com/photo-1513224506828-ac7c9880c101?auto=format&fit=crop&q=80&w=1200",
+    featuredImageUrl: "/image_copy_2.png",
     seoTitle: "Invisalign vs Traditional Braces | Hollyhill Dental Cork",
     seoDescription:
       "Compare Invisalign with traditional braces — aesthetics, comfort, hygiene and treatment speed — at Hollyhill Dental Cork.",
@@ -109,7 +106,7 @@ const STARTER_BLOG_POSTS = [
 <p>Ready to transform your smile? Book a consultation with us today.</p>`,
     category: "Cosmetic Dentistry",
     tags: "bonding, cosmetic, composite",
-    featuredImageUrl: "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?auto=format&fit=crop&q=80&w=1200",
+    featuredImageUrl: "/image_copy_5.png",
     seoTitle: "The Complete Guide to Composite Bonding | Hollyhill Dental",
     seoDescription: "Learn how composite bonding can repair chipped or uneven teeth in a single visit in Cork. Read our expert guide.",
   },
@@ -124,7 +121,7 @@ const STARTER_BLOG_POSTS = [
 <p>If you have an active dental emergency in Cork, call us immediately at <strong>+353 21 430 3072</strong>.</p>`,
     category: "Emergency Dental Care",
     tags: "emergency, pain, toothache",
-    featuredImageUrl: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=1200",
+    featuredImageUrl: "/image.png",
     seoTitle: "What to Do in a Dental Emergency | Hollyhill Dental Cork",
     seoDescription: "Find out what to do for a knocked-out tooth or severe toothache. Cork's emergency dental team explains.",
   },
@@ -139,7 +136,7 @@ const STARTER_BLOG_POSTS = [
 <p>Book your child's pediatric checkup today and let us help them build a healthy smile for life.</p>`,
     category: "Pediatric Dentistry",
     tags: "child, pediatric, checkup",
-    featuredImageUrl: "https://images.unsplash.com/photo-1484981138541-3d074aa97716?auto=format&fit=crop&q=80&w=1200",
+    featuredImageUrl: "/doctor.png",
     seoTitle: "Prepare Your Child for Their First Dentist Visit | Hollyhill Dental",
     seoDescription: "Practical advice on making your child's first dental checkup positive and stress-free at Hollyhill Dental Cork.",
   },
@@ -158,7 +155,7 @@ const STARTER_BLOG_POSTS = [
 <p>Have your gums been bleeding? Book an Exam, Scale & Polish appointment with us today.</p>`,
     category: "Gum Health & Periodontal Care",
     tags: "gum health, plaque, hygiene",
-    featuredImageUrl: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&q=80&w=1200",
+    featuredImageUrl: "/image_copy_3.png",
     seoTitle: "Gum Disease Prevention & Treatment | Hollyhill Dental Cork",
     seoDescription: "Learn the symptoms of gum disease and how to prevent it. Scale and polish services available at Hollyhill Dental.",
   },
@@ -172,7 +169,7 @@ const STARTER_BLOG_POSTS = [
 <p>If you're experiencing deep tooth pain, don't delay. Book a consultation today.</p>`,
     category: "Root Canal Treatment",
     tags: "root canal, endodontics, pain relief",
-    featuredImageUrl: "https://images.unsplash.com/photo-1629909615184-74f495363b67?auto=format&fit=crop&q=80&w=1200",
+    featuredImageUrl: "/image_copy.png",
     seoTitle: "Modern Pain-Free Root Canal Treatment | Hollyhill Dental",
     seoDescription: "Demystifying root canals. Learn why modern endodontic therapy at Hollyhill Dental in Cork is comfortable and safe.",
   },
@@ -191,7 +188,7 @@ const STARTER_BLOG_POSTS = [
 <p>Get in touch for home touch-up kits to keep your smile glowing all year round.</p>`,
     category: "Teeth Whitening",
     tags: "whitening, aftercare, smile care",
-    featuredImageUrl: "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&q=80&w=1200",
+    featuredImageUrl: "/clinic-storefront.png",
     seoTitle: "How to Maintain Teeth Whitening Results | Hollyhill Dental",
     seoDescription: "Keep your teeth white after your treatment. Learn the best post-whitening care tips from our Cork cosmetic dentists.",
   },
@@ -206,7 +203,7 @@ const STARTER_BLOG_POSTS = [
 <p>Book a consultation to map out your restorative treatment plan.</p>`,
     category: "Dental Implants",
     tags: "implants, bridges, replacement",
-    featuredImageUrl: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&q=80&w=1200",
+    featuredImageUrl: "/dental-implants.png",
     seoTitle: "Dental Implants vs. Fixed Bridges | Hollyhill Dental Cork",
     seoDescription: "Compare implants and bridges for replacing missing teeth. Discuss options with Dr. Roghay Alizadeh in Cork.",
   },
@@ -221,9 +218,10 @@ const STARTER_BLOG_POSTS = [
 <p>Book a digital smile consultation today and view a 3D preview of your straight smile before you start.</p>`,
     category: "Orthodontics & Braces",
     tags: "invisalign, braces, orthodontics",
-    featuredImageUrl: "https://images.unsplash.com/photo-1513224506828-ac7c9880c101?auto=format&fit=crop&q=80&w=1200",
+    featuredImageUrl: "/image-js-after.png",
     seoTitle: "Invisalign Clear Aligners for Adults | Hollyhill Dental Cork",
-    seoDescription: "Adult orthodontics made simple. Learn how Invisalign aligners can straighten your smile comfortably.",
+    seoDescription:
+      "Adult orthodontics made simple. Learn how Invisalign aligners can straighten your smile comfortably.",
   },
 ];
 
@@ -256,6 +254,9 @@ export const seedDatabase = async () => {
     // 2. Starter blog posts — only if a doctor/admin exists to author them.
     // We now automatically seed a default admin user if none exists so that the
     // blog posts can be seeded automatically on startup.
+    const defaultEmail = "doctor@hollyhilldental.ie";
+    const passwordHash = await bcrypt.hash("Admin1234!", 10);
+
     let admin = await db
       .select({ id: users.id })
       .from(users)
@@ -264,8 +265,6 @@ export const seedDatabase = async () => {
 
     if (admin.length === 0) {
       console.log("[seed] No admin account found. Automatically provisioning default doctor admin...");
-      const defaultEmail = "doctor@hollyhilldental.ie";
-      const passwordHash = await bcrypt.hash("Admin1234!", 10);
       const [newAdmin] = await db.insert(users).values({
         email: defaultEmail,
         passwordHash,
@@ -275,6 +274,15 @@ export const seedDatabase = async () => {
       }).returning({ id: users.id });
       console.log(`[seed] Created default admin account: ${defaultEmail}`);
       admin = [newAdmin];
+    } else {
+      console.log("[seed] Resetting default doctor admin account credentials and password change status...");
+      await db.update(users).set({
+        email: defaultEmail,
+        passwordHash,
+        isActive: true,
+        mustChangePassword: true,
+        updatedAt: new Date(),
+      }).where(eq(users.id, admin[0].id));
     }
 
     if (admin.length > 0) {
@@ -294,6 +302,23 @@ export const seedDatabase = async () => {
             publishedAt: new Date(),
           });
           postsAdded += 1;
+        } else {
+          // Update the existing post's image URL and details to make sure it gets the new local images
+          await db
+            .update(blogPosts)
+            .set({
+              title: post.title,
+              excerpt: post.excerpt,
+              body: post.body,
+              category: post.category,
+              tags: post.tags,
+              featuredImageUrl: post.featuredImageUrl,
+              seoTitle: post.seoTitle,
+              seoDescription: post.seoDescription,
+              publishedAt: new Date(),
+              updatedAt: new Date(),
+            })
+            .where(eq(blogPosts.id, existing[0].id));
         }
       }
       if (postsAdded > 0) {

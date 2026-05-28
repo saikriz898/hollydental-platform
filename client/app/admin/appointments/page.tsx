@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { apiRequest } from "@/lib/api";
 import { toast } from "@/lib/toast";
-import { Plus, User, Info, Check, RefreshCw, ClipboardList, FileText } from "lucide-react";
+import { Plus, User, Info, Check, RefreshCw, ClipboardList, FileText, UserPlus } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 export default function AdminAppointmentsPage() {

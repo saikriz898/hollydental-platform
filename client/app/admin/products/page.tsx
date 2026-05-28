@@ -380,107 +380,126 @@ export default function AdminProductsPage() {
               No products yet. Add the clinic's first item to get started.
             </div>
           ) : (
-            <div className="border border-gray-200 bg-white rounded-2xl overflow-hidden shadow-sm">
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse text-left text-xs">
-                  <thead className="bg-gray-50 border-b border-gray-100 text-navy uppercase tracking-wider font-bold text-[10px]">
-                    <tr>
-                      <th className="p-4">Product</th>
-                      <th className="p-4">Category</th>
-                      <th className="p-4">Price</th>
-                      <th className="p-4">Stock</th>
-                      <th className="p-4 text-center">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100 text-navy font-medium">
-                    {filteredProducts.map((product) => (
-                      <tr
-                        key={product.id}
-                        className="hover:bg-gray-50/40 transition-colors"
-                      >
-                        <td className="p-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden flex items-center justify-center shrink-0">
-                              {product.imageUrl ? (
-                                <img
-                                  src={product.imageUrl}
-                                  alt={product.name}
-                                  referrerPolicy="no-referrer"
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <ShoppingBag className="w-4 h-4 text-gray-400" />
-                              )}
-                            </div>
-                            <div className="min-w-0">
-                              <span className="font-bold block truncate max-w-[260px]">
-                                {product.name}
-                              </span>
-                              <span className="text-[10px] text-gray-400 font-normal truncate block max-w-[260px]">
-                                {product.description || "—"}
-                              </span>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <span
-                            className={`px-2 py-0.5 rounded-full font-bold text-[9px] uppercase tracking-wider ${
-                              product.category === "procedure"
-                                ? "bg-navy/5 text-navy"
-                                : "bg-gold/10 text-gold"
-                            }`}
-                          >
-                            {product.category === "procedure"
-                              ? "Procedure"
-                              : "Extra"}
-                          </span>
-                        </td>
-                        <td className="p-4 font-bold font-serif text-gold">
-                          {formatPrice(product.price, product.priceTo)}
-                        </td>
-                        <td className="p-4">
-                          {product.category === "procedure" ? (
-                            <span className="text-[10px] text-gray-400 italic">
-                              n/a
-                            </span>
-                          ) : (
-                            <span
-                              className={`px-2 py-0.5 rounded-full font-bold text-[9px] ${
-                                product.stockCount === 0
-                                  ? "bg-red-50 text-red-600"
-                                  : product.stockCount <= 5
-                                  ? "bg-amber-50 text-amber-600"
-                                  : "bg-emerald-50 text-emerald-600"
-                              }`}
-                            >
-                              {product.stockCount} in stock
-                            </span>
-                          )}
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center justify-center gap-3">
-                            <button
-                              onClick={() => handleEdit(product)}
-                              className="text-gray-400 hover:text-gold"
-                              title="Edit product"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(product.id)}
-                              className="text-gray-400 hover:text-red-500"
-                              title="Delete product"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
+            <>
+              {/* Desktop Table */}
+              <div className="hidden md:block border border-gray-200 bg-white rounded-2xl overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse text-left text-xs">
+                    <thead className="bg-gray-50 border-b border-gray-100 text-navy uppercase tracking-wider font-bold text-[10px]">
+                      <tr>
+                        <th className="p-4">Product</th>
+                        <th className="p-4">Category</th>
+                        <th className="p-4">Price</th>
+                        <th className="p-4">Stock</th>
+                        <th className="p-4 text-center">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 text-navy font-medium">
+                      {filteredProducts.map((product) => (
+                        <tr key={product.id} className="hover:bg-gray-50/40 transition-colors">
+                          <td className="p-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden flex items-center justify-center shrink-0">
+                                {product.imageUrl ? (
+                                  <img src={product.imageUrl} alt={product.name} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                                ) : (
+                                  <ShoppingBag className="w-4 h-4 text-gray-400" />
+                                )}
+                              </div>
+                              <div className="min-w-0">
+                                <span className="font-bold block truncate max-w-[260px]">{product.name}</span>
+                                <span className="text-[10px] text-gray-400 font-normal truncate block max-w-[260px]">{product.description || "—"}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <span className={`px-2 py-0.5 rounded-full font-bold text-[9px] uppercase tracking-wider ${
+                              product.category === "procedure" ? "bg-navy/5 text-navy" : "bg-gold/10 text-gold"
+                            }`}>
+                              {product.category === "procedure" ? "Procedure" : "Extra"}
+                            </span>
+                          </td>
+                          <td className="p-4 font-bold font-serif text-gold">{formatPrice(product.price, product.priceTo)}</td>
+                          <td className="p-4">
+                            {product.category === "procedure" ? (
+                              <span className="text-[10px] text-gray-400 italic">n/a</span>
+                            ) : (
+                              <span className={`px-2 py-0.5 rounded-full font-bold text-[9px] ${
+                                product.stockCount === 0 ? "bg-red-50 text-red-600"
+                                : product.stockCount <= 5 ? "bg-amber-50 text-amber-600"
+                                : "bg-emerald-50 text-emerald-600"
+                              }`}>
+                                {product.stockCount} in stock
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center justify-center gap-3">
+                              <button onClick={() => handleEdit(product)} className="p-1.5 rounded-lg hover:bg-gold/10 text-gray-400 hover:text-gold transition-colors" title="Edit product"><Edit3 className="w-4 h-4" /></button>
+                              <button onClick={() => handleDelete(product.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors" title="Delete product"><Trash2 className="w-4 h-4" /></button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
+
+              {/* Mobile Card Grid */}
+              <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {filteredProducts.map((product) => (
+                  <div key={product.id} className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex flex-col gap-3">
+                    {/* Image + Name */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden flex items-center justify-center shrink-0">
+                        {product.imageUrl ? (
+                          <img src={product.imageUrl} alt={product.name} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                        ) : (
+                          <ShoppingBag className="w-5 h-5 text-gray-400" />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-bold text-navy text-xs truncate">{product.name}</p>
+                        <p className="text-[10px] text-gray-400 truncate mt-0.5">{product.description || "—"}</p>
+                      </div>
+                    </div>
+
+                    {/* Meta */}
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className={`px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                        product.category === "procedure" ? "bg-navy/5 text-navy" : "bg-gold/10 text-gold"
+                      }`}>
+                        {product.category === "procedure" ? "Procedure" : "Extra"}
+                      </span>
+                      <span className="font-serif font-bold text-gold text-sm">{formatPrice(product.price, product.priceTo)}</span>
+                    </div>
+
+                    {product.category !== "procedure" && (
+                      <div className="text-[10px]">
+                        <span className={`px-2 py-0.5 rounded-full font-bold ${
+                          product.stockCount === 0 ? "bg-red-50 text-red-600"
+                          : product.stockCount <= 5 ? "bg-amber-50 text-amber-600"
+                          : "bg-emerald-50 text-emerald-600"
+                        }`}>
+                          {product.stockCount} in stock
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Actions */}
+                    <div className="flex gap-2 pt-1 border-t border-gray-50">
+                      <button onClick={() => handleEdit(product)} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border border-gold/30 text-gold text-[10px] font-bold hover:bg-gold/5 transition-colors">
+                        <Edit3 className="w-3.5 h-3.5" /> Edit
+                      </button>
+                      <button onClick={() => handleDelete(product.id)} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg border border-red-100 text-red-500 text-[10px] font-bold hover:bg-red-50 transition-colors">
+                        <Trash2 className="w-3.5 h-3.5" /> Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </>
       )}

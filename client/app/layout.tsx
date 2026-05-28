@@ -71,7 +71,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-white text-navy selection:bg-gold/30">
+      <body
+        className="min-h-full flex flex-col bg-white text-navy selection:bg-gold/30"
+        suppressHydrationWarning
+      >
         <Preloader />
         {children}
         <AuthModals />

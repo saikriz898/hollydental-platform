@@ -104,7 +104,18 @@ function clinicalImageFor(slug: string) {
     case "dental-crowns":
     case "dental-bridges":
     case "dentures":
-      return { before: "/image-js-before.png", after: "/image-js-after.png", initials: "J.S." };
+      return {
+        before: "/image-js-before.png",
+        after: "/image-js-after.png",
+        initials: "J.S.",
+      };
+    case "gum-treatment":
+    case "periodontal-care":
+      return {
+        before: "/image-js-before.png",
+        after: "/image-js-after.png",
+        initials: "G.T.",
+      };
     case "root-canal":
     case "root-canal-canine":
     case "root-canal-premolar":

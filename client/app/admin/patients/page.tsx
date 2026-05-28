@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { apiRequest } from "@/lib/api";
 import Link from "next/link";
-import { Search, UserPlus, FileText, ChevronRight, Eye, ClipboardList } from "lucide-react";
+import { Search, UserPlus, FileText, ChevronRight, Eye, ClipboardList, Phone, Mail } from "lucide-react";
 
 export default function AdminPatientsPage() {
   const [patients, setPatients] = useState<any[]>([]);
@@ -59,39 +59,53 @@ export default function AdminPatientsPage() {
           </p>
         </div>
       ) : (
-        <div className="border border-gray-200 bg-white rounded-2xl overflow-hidden shadow-sm">
-          <table className="w-full text-xs text-left">
-            <thead className="bg-navy text-white">
-              <tr>
-                <th className="p-4">Name</th>
-                <th className="p-4">Phone</th>
-                <th className="p-4">Email</th>
-                <th className="p-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {patients.map((p) => (
-                <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                  <td className="p-4 font-bold text-navy flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gold/10 text-gold flex items-center justify-center font-bold text-[10px]">
-                      {p.firstName[0]}
-                    </div>
-                    <span>{p.firstName} {p.lastName}</span>
-                  </td>
-                  <td className="p-4 text-gray-600">{p.phone}</td>
-                  <td className="p-4 text-gray-500">{p.email}</td>
-                  <td className="p-4 text-right space-x-3 font-semibold">
-                    <Link
-                      href={`/admin/patients/${p.id}`}
-                      className="text-navy hover:text-gold transition-colors inline-flex items-center gap-1 focus:outline-none"
-                    >
-                      <Eye className="w-3.5 h-3.5" /> View Profile
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {patients.map((p) => (
+            <div
+              key={p.id}
+              className="bg-white border border-gray-100 hover:border-gold rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between h-full group"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-gold/10 text-gold flex items-center justify-center font-bold text-xs shrink-0 uppercase">
+                    {(p.firstName?.[0] || "") + (p.lastName?.[0] || "")}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-serif text-sm font-bold text-navy truncate group-hover:text-gold transition-colors">
+                      {p.firstName} {p.lastName}
+                    </h3>
+                    <span className="text-[9px] uppercase tracking-wider bg-navy/5 text-navy font-bold px-2 py-0.5 rounded-full inline-block mt-0.5">
+                      Patient
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-2.5 text-xs text-gray-500 mb-6">
+                  <div className="flex items-center gap-2 border-b border-gray-50 pb-2">
+                    <Phone className="w-3.5 h-3.5 text-gold shrink-0" />
+                    <a href={`tel:${p.phone}`} className="text-navy hover:text-gold transition-colors font-semibold truncate">
+                      {p.phone || "—"}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-3.5 h-3.5 text-gold shrink-0" />
+                    <a href={`mailto:${p.email}`} className="text-navy hover:text-gold transition-colors font-semibold truncate" title={p.email}>
+                      {p.email || "—"}
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-100">
+                <Link
+                  href={`/admin/patients/${p.id}`}
+                  className="w-full text-center bg-navy hover:bg-gold text-white hover:text-navy font-bold py-2.5 rounded-lg text-xs transition-colors inline-flex items-center justify-center gap-1.5 focus:outline-none shadow-sm"
+                >
+                  <Eye className="w-3.5 h-3.5" /> View Profile
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 

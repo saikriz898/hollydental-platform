@@ -64,11 +64,22 @@ export default function LoginModal() {
   // Reset form and lock scroll when modal opens/closes
   useEffect(() => {
     if (isLoginModalOpen) {
-      setEmail("");
+      // Pre-fill email when an invite link includes ?email=...
+      let prefilled = "";
+      if (typeof window !== "undefined") {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const fromUrl = params.get("email");
+          if (fromUrl) prefilled = fromUrl;
+        } catch {
+          // ignore — URL parsing failures shouldn't block login
+        }
+      }
+      setEmail(prefilled);
       setPassword("");
       setShowPassword(false);
       setError("");
-      setForgotEmail("");
+      setForgotEmail(prefilled);
       setForgotSuccess(false);
       setForgotError("");
       document.body.style.overflow = "hidden";
@@ -266,14 +277,12 @@ export default function LoginModal() {
               <ForceChangePasswordView
                 onSuccess={(user) => {
                   login(user);
-                  if (onLoginSuccess) {
+                  if (user.role === "admin") {
+                    router.push("/admin/dashboard");
+                  } else if (onLoginSuccess) {
                     onLoginSuccess();
-                  } else {
-                    if (user.role === "admin") {
-                      router.push("/admin/dashboard");
-                    } else if (user.role === "patient") {
-                      router.push("/portal/dashboard");
-                    }
+                  } else if (user.role === "patient") {
+                    router.push("/portal/dashboard");
                   }
                   closeLoginModal();
                 }}

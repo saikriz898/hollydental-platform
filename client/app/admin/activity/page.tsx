@@ -120,7 +120,7 @@ export default function AdminActivityLogPage() {
         </div>
       )}
 
-      <div className="bg-white border border-gray-100 shadow-card rounded-2xl overflow-hidden max-h-[600px] overflow-y-auto">
+      <div className="bg-white border border-gray-100 shadow-card rounded-2xl overflow-hidden max-h-[600px] overflow-auto">
         {loading && rows.length === 0 ? (
           <div className="p-10 text-center text-xs text-gray-400">Loading audit log…</div>
         ) : rows.length === 0 ? (
@@ -128,7 +128,7 @@ export default function AdminActivityLogPage() {
             No activity matches the current filters.
           </div>
         ) : (
-          <table className="w-full text-xs">
+          <table className="w-full text-xs min-w-[800px]">
             <thead className="bg-off-white border-b border-gray-100 text-[10px] uppercase tracking-widest text-gray-500 sticky top-0 z-10">
               <tr>
                 <th className="text-left px-4 py-3 bg-off-white">When</th>

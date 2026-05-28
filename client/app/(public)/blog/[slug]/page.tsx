@@ -49,7 +49,7 @@ export default async function BlogPostDetailPage({ params }: BlogPageProps) {
               <span>{CLINIC?.doctor || "Dr. Roghay Alizadeh"}</span>
             </div>
             <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4 text-gold" /> {new Date(post.publishedAt).toLocaleDateString()}
+              <Calendar className="w-4 h-4 text-gold" /> {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : new Date().toLocaleDateString()}
             </div>
           </div>
 

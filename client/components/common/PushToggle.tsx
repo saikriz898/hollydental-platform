@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, BellOff } from "lucide-react";
+import { BellRing, BellOff, Check } from "lucide-react";
 import {
   enablePushNotifications,
   disablePushNotifications,
@@ -103,28 +103,40 @@ export default function PushToggle({
         type="button"
         onClick={isOn ? handleDisable : handleEnable}
         disabled={busy || state === "denied"}
-        className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full transition-colors disabled:opacity-50 ${
+        className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1.5 rounded-full transition-colors disabled:opacity-50 ${
           isOn
             ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
             : "bg-gold/10 text-gold hover:bg-gold/20"
         } ${className}`}
         title={
           state === "denied"
-            ? "Notifications are blocked in your browser settings."
+            ? "Push notifications are blocked in your browser settings."
             : isOn
-            ? "Disable push notifications"
-            : "Enable push notifications"
+            ? "Push notifications are on. Click to disable."
+            : "Enable browser push notifications."
+        }
+        aria-label={
+          isOn
+            ? "Disable browser push notifications"
+            : "Enable browser push notifications"
         }
       >
-        {isOn ? <Bell className="w-3.5 h-3.5" /> : <BellOff className="w-3.5 h-3.5" />}
-        <span className="hidden sm:inline">
+        {isOn ? (
+          <span className="relative flex items-center">
+            <BellRing className="w-3.5 h-3.5" />
+            <Check className="w-2.5 h-2.5 absolute -bottom-0.5 -right-1 text-emerald-600 bg-white rounded-full" />
+          </span>
+        ) : (
+          <BellOff className="w-3.5 h-3.5" />
+        )}
+        <span className="hidden lg:inline">
           {busy
             ? "…"
             : state === "denied"
             ? "Blocked"
             : isOn
-            ? "Notifications on"
-            : "Enable alerts"}
+            ? "Push on"
+            : "Push off"}
         </span>
       </button>
     );
@@ -143,7 +155,7 @@ export default function PushToggle({
                 : "bg-gold/10 text-gold"
             }`}
           >
-            {isOn ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
+            {isOn ? <BellRing className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
           </span>
           <div>
             <h3 className="font-serif text-sm font-bold text-navy">

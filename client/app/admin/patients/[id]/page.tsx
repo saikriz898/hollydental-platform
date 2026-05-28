@@ -110,17 +110,18 @@ export default function AdminPatientProfilePage({ params }: PageProps) {
     <div className="space-y-6">
       
       {/* Patient header card */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-gold/15 border-2 border-gold text-gold flex items-center justify-center font-bold text-lg shadow-inner">
+      <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 shadow-sm">
+        {/* Top: Avatar + Name */}
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gold/15 border-2 border-gold text-gold flex items-center justify-center font-bold text-base sm:text-lg shadow-inner shrink-0">
             {patient.firstName[0]}{patient.lastName[0]}
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-serif text-xl md:text-2xl font-bold text-navy">
+              <h2 className="font-serif text-lg sm:text-2xl font-bold text-navy">
                 {patient.firstName} {patient.lastName}
               </h2>
-              <span className="bg-navy/5 text-navy text-[9px] font-bold px-2 py-0.5 rounded border border-gray-200 uppercase">
+              <span className="bg-navy/5 text-navy text-[9px] font-bold px-2 py-0.5 rounded border border-gray-200 uppercase shrink-0">
                 ID: {patient.id.substring(0, 8).toUpperCase()}
               </span>
             </div>
@@ -128,23 +129,24 @@ export default function AdminPatientProfilePage({ params }: PageProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 self-start md:self-auto">
+        {/* Action buttons — full width on mobile, inline on md+ */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2 pt-3 border-t border-gray-50">
           <button
             onClick={handleForcePasswordReset}
             disabled={forcing}
-            className="bg-white border border-red-200 hover:bg-red-50 text-red-600 font-semibold text-xs py-2.5 px-4 rounded-lg shadow-sm transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            className="flex-1 sm:flex-none bg-white border border-red-200 hover:bg-red-50 text-red-600 font-semibold text-xs py-2.5 px-4 rounded-lg shadow-sm transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
             title="Force this patient to set a new password on next sign-in"
           >
-            <Lock className="w-3.5 h-3.5" />
+            <Lock className="w-3.5 h-3.5 shrink-0" />
             {forcing ? "Working…" : "Force password reset"}
           </button>
 
           <button
             onClick={handleGenerateAISummary}
             disabled={generatingAi}
-            className="bg-navy hover:bg-gray-800 text-white font-bold text-xs py-2.5 px-5 rounded-lg shadow-md transition-all flex items-center gap-2 disabled:opacity-50"
+            className="flex-1 sm:flex-none bg-navy hover:bg-gray-800 text-white font-bold text-xs py-2.5 px-5 rounded-lg shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            <Cpu className="w-4 h-4 text-gold animate-pulse" />
+            <Cpu className="w-4 h-4 text-gold animate-pulse shrink-0" />
             {generatingAi ? "Analyzing History..." : "Generate AI Summary"}
           </button>
         </div>

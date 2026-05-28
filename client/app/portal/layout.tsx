@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import PortalSidebar from "@/components/portal/PortalSidebar";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, CalendarDays, History, MessageSquare, User, Bell, LogOut } from "lucide-react";
+import { LayoutDashboard, CalendarDays, History, MessageSquare, User, Bell, LogOut, Menu } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import SessionWatcher from "@/components/auth/SessionWatcher";
 import PushToggle from "@/components/common/PushToggle";
@@ -27,6 +27,13 @@ export default function PortalLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { user, isInitialized, initialize, isLoggingOut, performLogoutTransition } = useAuthStore();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (window.innerWidth >= 1280) {
+      setSidebarOpen(true);
+    }
+  }, []);
 
   const isAuthRoute = AUTH_ROUTES.some((p) => pathname.startsWith(p));
 
@@ -123,11 +130,20 @@ export default function PortalLayout({
     <div className="flex bg-gray-50 h-screen overflow-hidden">
       {isLoggingOut && <LogoutOverlay />}
       <SessionWatcher idleMinutes={30} />
-      <PortalSidebar />
+      <PortalSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0 h-full">
         <header className="h-[64px] bg-white border-b border-gray-100 flex items-center justify-between px-6 xl:px-8 shrink-0">
-          <span className="font-serif text-base font-bold text-navy">Patient Portal</span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-1.5 rounded-lg hover:bg-gray-100 text-navy transition-colors focus:outline-none cursor-pointer"
+              aria-label="Toggle Sidebar"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <span className="font-serif text-base font-bold text-navy">Patient Portal</span>
+          </div>
           <div className="flex items-center gap-4">
             <PushToggle />
 

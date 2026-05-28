@@ -1,7 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { useLiveData } from "@/lib/useLiveData";
-import { ClipboardList, Calendar, Pill, HelpCircle } from "lucide-react";
+import {
+  ClipboardList,
+  Calendar,
+  Pill,
+  ChevronDown,
+  RefreshCw,
+} from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 interface Prescription {
@@ -23,85 +30,155 @@ function normalizePrescriptions(raw: any): Prescription[] {
 }
 
 export default function PatientPrescriptionsPage() {
-  const { data: prescriptions = [], loading } = useLiveData<Prescription[]>("/prescriptions", {
-    intervalMs: 30000,
+  const {
+    data: prescriptions = [],
+    loading,
+    refetch,
+  } = useLiveData<Prescription[]>("/prescriptions", {
+    intervalMs: 20000,
     select: normalizePrescriptions,
     initialData: [],
   });
 
-  return (
-    <div className="space-y-6">
-      
-      {/* Header */}
-      <div className="border-b border-gray-100 pb-4">
-        <h1 className="font-serif text-2xl font-bold text-navy">My Prescriptions</h1>
-        <p className="text-gray-500 text-xs mt-1">
-          Review authorized medical scripts and drug dosage guidelines from Dr. Roghay.
-        </p>
-      </div>
+  const [expanded, setExpanded] = useState<string | null>(null);
 
-      {loading ? (
+  return (
+    <div className="space-y-6 font-sans">
+      <header className="flex items-center justify-between border-b border-gray-100 pb-4 gap-3">
+        <div>
+          <h1 className="font-sans text-2xl font-bold text-navy">
+            My prescriptions
+          </h1>
+          <p className="text-gray-500 text-xs mt-1">
+            Active medical scripts and dosage guidelines from Dr. Roghay.
+            Updates live.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Live
+          </span>
+          <button
+            onClick={refetch}
+            className="text-xs font-semibold text-gold border border-gold/20 hover:bg-gold/5 px-4 py-2 rounded-lg flex items-center gap-1.5 focus:outline-none transition-colors"
+          >
+            <RefreshCw
+              className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`}
+            />
+            Sync
+          </button>
+        </div>
+      </header>
+
+      {loading && prescriptions.length === 0 ? (
         <div className="h-[200px] shimmer rounded-2xl" />
       ) : prescriptions.length === 0 ? (
         <div className="border border-gray-100 rounded-2xl bg-white p-12 text-center space-y-4 max-w-md mx-auto">
           <ClipboardList className="w-10 h-10 text-gray-300 mx-auto" />
-          <h3 className="font-serif text-base font-semibold text-navy">No Active Scripts</h3>
+          <h3 className="font-sans text-base font-bold text-navy">
+            No active scripts
+          </h3>
           <p className="text-gray-500 text-xs leading-relaxed">
-            There are no medical prescriptions logged in your patient file. If you were recently issued a script, it will appear here once finalized by the clinician.
+            There are no medical prescriptions on file yet. Anything issued by
+            the clinician will appear here as soon as it is finalised.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {prescriptions.map((rx) => (
-            <div
-              key={rx.id}
-              className="border border-gray-100 bg-white rounded-2xl p-5 shadow-sm space-y-4 hover:border-gold transition-colors flex flex-col justify-between"
-            >
-              <div className="space-y-3">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-gold/10 text-gold flex items-center justify-center shrink-0">
-                      <Pill className="w-4 h-4" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {prescriptions.map((rx) => {
+            const isOpen = expanded === rx.id;
+            return (
+              <article
+                key={rx.id}
+                className="border border-gray-100 bg-white rounded-2xl shadow-sm hover:border-gold transition-colors flex flex-col overflow-hidden"
+              >
+                <button
+                  type="button"
+                  onClick={() => setExpanded(isOpen ? null : rx.id)}
+                  className="p-5 text-left space-y-3"
+                >
+                  <div className="flex justify-between items-start gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-9 h-9 rounded-lg bg-gold/10 text-gold flex items-center justify-center shrink-0">
+                        <Pill className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="font-sans text-base font-bold text-navy truncate">
+                          {rx.drugName}
+                        </h4>
+                        <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">
+                          {rx.dosage} · {rx.frequency}
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-serif text-base font-bold text-navy">
-                        {rx.drugName}
-                      </h4>
-                      <span className="text-[10px] text-gray-400 font-semibold uppercase">
-                        {rx.dosage} &middot; {rx.frequency}
-                      </span>
-                    </div>
-                  </div>
-                  <span className="text-[9px] font-bold text-navy bg-gold/10 px-2 py-0.5 rounded">
-                    {rx.duration}
-                  </span>
-                </div>
-
-                <div className="text-xs text-gray-600 bg-gray-50 p-3 rounded-lg space-y-1.5 leading-relaxed">
-                  <span className="font-bold text-navy block text-[10px] uppercase tracking-wider">
-                    Instructions
-                  </span>
-                  <p>{rx.instructions}</p>
-                </div>
-
-                {rx.notes && (
-                  <div className="text-[11px] text-gray-500 italic pl-1 border-l-2 border-gold/40">
-                    <span className="font-bold text-navy not-italic block text-[9px] uppercase tracking-wider mb-0.5">
-                      Doctor's Notes
+                    <span className="text-[9px] font-bold text-navy bg-gold/10 border border-gold/20 px-2 py-0.5 rounded uppercase tracking-wider whitespace-nowrap">
+                      {rx.duration}
                     </span>
-                    {rx.notes}
+                  </div>
+
+                  <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">
+                    {rx.instructions}
+                  </p>
+
+                  <div className="flex items-center justify-between text-[10px] text-gray-400 border-t border-gray-50 pt-3">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5 text-gold" />
+                      Issued {formatDate(rx.createdAt)}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-navy font-semibold">
+                      {isOpen ? "Hide details" : "View details"}
+                      <ChevronDown
+                        className={`w-3.5 h-3.5 transition-transform ${
+                          isOpen ? "rotate-180 text-gold" : ""
+                        }`}
+                      />
+                    </span>
+                  </div>
+                </button>
+
+                {isOpen && (
+                  <div className="border-t border-gray-100 bg-gray-50/60 px-5 py-4 space-y-4 animate-fade-up">
+                    <DetailRow label="Drug" value={rx.drugName} />
+                    <DetailRow label="Dosage" value={rx.dosage} />
+                    <DetailRow label="Frequency" value={rx.frequency} />
+                    <DetailRow label="Duration" value={rx.duration} />
+                    <div className="space-y-1">
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-gold">
+                        Instructions
+                      </span>
+                      <p className="text-xs text-navy leading-relaxed bg-white border border-gray-100 rounded-lg p-3 whitespace-pre-line">
+                        {rx.instructions}
+                      </p>
+                    </div>
+                    {rx.notes && (
+                      <div className="space-y-1">
+                        <span className="block text-[10px] font-bold uppercase tracking-wider text-gold">
+                          Doctor's notes
+                        </span>
+                        <p className="text-xs text-gray-600 italic border-l-2 border-gold/40 pl-3 whitespace-pre-line">
+                          {rx.notes}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-
-              <div className="flex items-center gap-1 text-[10px] text-gray-400 border-t border-gray-50 pt-3 mt-4">
-                <Calendar className="w-3.5 h-3.5" />
-                <span>Issued on {formatDate(rx.createdAt)}</span>
-              </div>
-            </div>
-          ))}
+              </article>
+            );
+          })}
         </div>
       )}
+    </div>
+  );
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-3 text-xs">
+      <span className="text-[10px] uppercase tracking-wider font-bold text-gray-400">
+        {label}
+      </span>
+      <span className="text-navy font-semibold text-right">{value}</span>
     </div>
   );
 }

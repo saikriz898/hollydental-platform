@@ -235,7 +235,7 @@ export default function HomeClient() {
               <div className="bg-gradient-to-br from-navy/90 via-[#0c1b2f]/95 to-[#040e1a]/95 backdrop-blur-xl border border-gold/30 rounded-3xl p-6 sm:p-8 max-w-sm w-full space-y-5 shadow-[0_20px_50px_rgba(0,0,0,0.45)] border-t border-t-white/20 transition-all duration-500 hover:translate-y-[-6px] hover:[transform:rotateX(3deg)_rotateY(-3deg)] hover:shadow-[0_30px_60px_rgba(201,169,110,0.18)] hover:border-gold/50">
                 <div className="text-center">
                   <span className="text-[11px] uppercase font-bold tracking-[0.25em] text-gold/90 block">We Are Open</span>
-                  <span className="text-lg sm:text-xl font-bold text-white mt-1.5 block font-serif">09:00 AM – 16:00 PM</span>
+                  <span className="text-lg sm:text-xl font-bold text-white mt-1.5 block">9:00 AM – 4:00 PM</span>
                 </div>
                 <div className="h-px bg-white/10 w-full" />
                 <div className="flex flex-col gap-3 text-xs sm:text-sm text-gray-200">

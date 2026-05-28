@@ -11,7 +11,6 @@ import {
   X,
   Home,
   Briefcase,
-  Grid,
   ChevronDown,
   ArrowRight,
   ShieldAlert,
@@ -146,7 +145,7 @@ export default function Navbar() {
             </span>
             <span className="inline-flex items-center gap-1.5 text-gray-400">
               <Clock className="w-3 h-3 text-gold" />
-              Mon–Fri 9:00–18:00 · Sat 10:00–14:00
+              Mon–Fri 9:00 AM – 4:00 PM · Sat 9:00 AM – 2:00 PM
             </span>
           </div>
           <div className="flex items-center gap-5">
@@ -569,9 +568,16 @@ export default function Navbar() {
         <ShieldAlert className="w-6 h-6" />
       </a>
 
-      {/* Bottom nav (mobile) */}
+      {/* Bottom nav (mobile) — only the essentials. The drawer covers
+          everything else, so we keep this to the four actions a patient
+          actually needs in their thumb-zone. */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 flex items-center justify-around px-2 z-40 shadow-inner">
-        <BottomLink href="/" icon={<Home className="w-5 h-5" />} label="Home" active={isActive("/")} />
+        <BottomLink
+          href="/"
+          icon={<Home className="w-5 h-5" />}
+          label="Home"
+          active={isActive("/")}
+        />
         <BottomLink
           href="/services"
           icon={<Briefcase className="w-5 h-5" />}
@@ -581,19 +587,19 @@ export default function Navbar() {
         <button
           type="button"
           onClick={goToBooking}
-          className={`flex flex-col items-center justify-center font-semibold cursor-pointer border-0 bg-transparent transition-all ${
-            isActive("/portal/booking") ? "text-gold font-bold scale-105" : "text-gold hover:scale-105"
-          }`}
+          aria-label="Book appointment"
+          className="-mt-6 w-14 h-14 rounded-full bg-gradient-to-br from-gold to-gold-dark text-navy shadow-[0_8px_20px_-4px_rgba(0,173,239,0.55)] flex items-center justify-center transition-transform active:scale-95 focus:outline-none"
         >
-          <Calendar className="w-6 h-6 text-gold" />
-          <span className="text-[10px] mt-1">Book</span>
+          <Calendar className="w-6 h-6" />
         </button>
-        <BottomLink
-          href="/contact"
-          icon={<Grid className="w-5 h-5" />}
-          label="More"
-          active={isActive("/contact")}
-        />
+        <a
+          href={CLINIC.phoneHref}
+          aria-label={`Call ${CLINIC.phone}`}
+          className="flex flex-col items-center justify-center text-gray-500 hover:text-gold transition-colors"
+        >
+          <Phone className="w-5 h-5" />
+          <span className="text-[10px] mt-1">Call</span>
+        </a>
       </nav>
     </>
   );

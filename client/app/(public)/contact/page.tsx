@@ -180,8 +180,8 @@ export default function ContactPage() {
                 <Clock className="w-4 h-4 text-gold" /> Opening Hours
               </h3>
               <ul className="text-sm text-gray-600 divide-y divide-gray-50">
-                <HourRow label="Monday – Friday" value="9:00 – 17:30" />
-                <HourRow label="Saturday" value="9:00 – 14:00" />
+                <HourRow label="Monday – Friday" value="9:00 AM – 4:00 PM" />
+                <HourRow label="Saturday" value="9:00 AM – 2:00 PM" />
                 <HourRow label="Sunday" value="Closed" muted />
               </ul>
             </div>

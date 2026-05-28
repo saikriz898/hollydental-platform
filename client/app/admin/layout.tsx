@@ -14,6 +14,7 @@ import {
   CalendarClock,
   MessageSquare,
   LogOut,
+  Menu,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import SessionWatcher from "@/components/auth/SessionWatcher";
@@ -29,6 +30,13 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { user, isInitialized, initialize, isLoggingOut, performLogoutTransition } = useAuthStore();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (window.innerWidth >= 1280) {
+      setSidebarOpen(true);
+    }
+  }, []);
 
   const [showNotifDropdown, setShowNotifDropdown] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -119,19 +127,27 @@ export default function AdminLayout({
       {/* Idle / session-expiry watcher */}
       <SessionWatcher idleMinutes={30} />
       {/* Admin Navy Sidebar */}
-      <AdminSidebar />
+      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-full">
         
         {/* Header bar */}
-        <header className="h-[64px] bg-white border-b border-gray-200 flex items-center justify-between px-6 xl:px-8 shrink-0">
-          <div className="flex items-center gap-2">
-            <span className="font-serif text-base font-bold text-navy">
-              Clinical Administration
+        <header className="h-[64px] bg-white border-b border-gray-200 flex items-center justify-between gap-3 px-4 sm:px-6 xl:px-8 shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-1.5 rounded-lg hover:bg-gray-100 text-navy transition-colors focus:outline-none cursor-pointer"
+              aria-label="Toggle Sidebar"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <span className="font-serif text-base font-bold text-navy truncate">
+              <span className="hidden sm:inline">Clinical Administration</span>
+              <span className="sm:hidden">Clinical Admin</span>
             </span>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             {/* Push notifications toggle */}
             <PushToggle />
             {/* Notification Bell */}
@@ -151,11 +167,15 @@ export default function AdminLayout({
 
               {/* Dropdown Menu */}
               {showNotifDropdown && (
-                <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-gray-200 rounded-2xl shadow-xl py-3 z-50 animate-fade-in text-xs text-navy font-semibold">
-                  <div className="px-4 pb-2 border-b border-gray-100 flex items-center justify-between">
-                    <span className="font-serif text-sm font-bold text-navy">Notifications</span>
+                <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-gray-200 rounded-2xl shadow-xl py-3 z-50 animate-fade-in text-xs text-navy font-sans font-semibold">
+                  <div className="px-4 pb-2 border-b border-gray-100 flex items-center justify-between gap-2">
+                    <span className="font-sans text-sm font-bold text-navy">
+                      Notifications
+                    </span>
                     {pendingAppts + unreadMsgs > 0 && (
-                      <span className="text-[10px] text-gold uppercase tracking-wider font-bold">New alerts</span>
+                      <span className="text-[10px] text-gold uppercase tracking-wider font-bold whitespace-nowrap">
+                        New alerts
+                      </span>
                     )}
                   </div>
                   <div className="divide-y divide-gray-50 max-h-60 overflow-y-auto">
@@ -202,7 +222,7 @@ export default function AdminLayout({
               )}
             </div>
 
-            <div className="flex items-center gap-4 border-l border-gray-100 pl-4">
+            <div className="flex items-center gap-2 sm:gap-3 border-l border-gray-100 pl-2 sm:pl-4">
               <div className="text-right hidden md:block">
                 <span className="block text-xs font-bold text-navy whitespace-nowrap">Dr. Roghay Alizadeh</span>
                 <span className="block text-[9px] text-gold font-bold uppercase tracking-wider whitespace-nowrap">Principal Dentist</span>
@@ -214,6 +234,7 @@ export default function AdminLayout({
                 onClick={() => performLogoutTransition(router)}
                 className="p-1.5 rounded-full hover:bg-red-50 text-red-500 transition-colors focus:outline-none cursor-pointer flex items-center justify-center border border-red-100 hover:border-red-200 shrink-0"
                 title="Sign Out"
+                aria-label="Sign Out"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -222,7 +243,11 @@ export default function AdminLayout({
         </header>
 
         {/* Dynamic pages */}
-        <main className={`flex-1 p-6 xl:p-8 ${pathname.endsWith("/messages") ? "overflow-hidden" : "overflow-y-auto"} pb-24 xl:pb-8`}>
+        <main className={`flex-1 ${
+          pathname.endsWith("/messages")
+            ? "overflow-hidden p-0 xl:p-8"
+            : "overflow-y-auto p-4 xl:p-8 pb-24 xl:pb-8"
+        }`}>
           {children}
         </main>
       </div>

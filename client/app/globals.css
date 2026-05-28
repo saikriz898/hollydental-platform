@@ -132,11 +132,11 @@ body[data-mobile-menu-open="1"] [data-ai-chatbot] {
 
 /* Hide scrollbar utility for clean, premium modal interfaces */
 .no-scrollbar::-webkit-scrollbar {
-  display: none;
+  display: none !important;
 }
 .no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }
 
 /* Full Width Design (Full Left and Right layout) */

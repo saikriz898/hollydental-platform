@@ -5,13 +5,14 @@ import { apiRequest } from "@/lib/api";
 import {
   ShoppingBag,
   Search,
-  HelpCircle,
   Phone,
   MapPin,
   Sparkles,
+  ArrowRight,
+  Package,
 } from "lucide-react";
 import { CLINIC } from "@/lib/constants";
-import { toast } from "@/lib/toast";
+import Link from "next/link";
 
 interface Product {
   id: string;
@@ -36,7 +37,6 @@ export default function PatientProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     fetchProducts();
@@ -71,20 +71,12 @@ export default function PatientProductsPage() {
     (p) => (p.category || "extra") !== "procedure"
   );
 
-  const confirmInquiry = () => {
-    if (!selectedProduct) return;
-    toast.success(
-      `Inquiry sent for ${selectedProduct.name}. Dr. Roghay will review it before your next visit.`
-    );
-    setSelectedProduct(null);
-  };
-
   return (
     <div className="space-y-8 pb-12">
-      {/* Clinic header card — mirrors the existing Hollyhill storefront */}
-      <header className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 md:p-7 space-y-3">
+      {/* Clinic header card */}
+      <header className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 sm:p-7 space-y-3">
         <div className="flex flex-wrap items-center gap-4">
-          <h1 className="font-serif text-3xl md:text-4xl font-bold text-navy">
+          <h1 className="font-serif text-2xl sm:text-4xl font-bold text-navy">
             {CLINIC.name}
           </h1>
           <a
@@ -130,8 +122,7 @@ export default function PatientProductsPage() {
               subtitle="Chairside treatments delivered at the clinic"
               icon={<Sparkles className="w-3.5 h-3.5" />}
               products={procedures}
-              onInquire={setSelectedProduct}
-              ctaLabel="Book consultation"
+              ctaLabel="View & Book"
             />
           )}
 
@@ -141,56 +132,9 @@ export default function PatientProductsPage() {
               subtitle="Take-home oral care recommended by the clinic"
               icon={<ShoppingBag className="w-3.5 h-3.5" />}
               products={extras}
-              onInquire={setSelectedProduct}
-              ctaLabel="Reserve / Inquire"
+              ctaLabel="View & Order"
             />
           )}
-        </div>
-      )}
-
-      {/* Inquiry Modal */}
-      {selectedProduct && (
-        <div className="fixed inset-0 bg-navy/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white border border-gray-100 rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-xl animate-scale-in">
-            <div className="flex items-center gap-3 border-b border-gray-100 pb-3">
-              <div className="w-10 h-10 rounded-full bg-gold/10 text-gold flex items-center justify-center">
-                <HelpCircle className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-serif text-sm font-bold text-navy">
-                  {selectedProduct.category === "procedure"
-                    ? "Book this treatment"
-                    : "Reserve this item"}
-                </h4>
-                <p className="text-[10px] text-gray-400">
-                  {selectedProduct.category === "procedure"
-                    ? "Add to your next appointment"
-                    : "Pick up at the clinic"}
-                </p>
-              </div>
-            </div>
-
-            <p className="text-xs text-gray-600 leading-relaxed">
-              Send an inquiry for <strong>{selectedProduct.name}</strong>. Our
-              team will reply with available appointment times and confirm
-              pricing before your visit.
-            </p>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setSelectedProduct(null)}
-                className="flex-1 border border-gray-200 hover:bg-gray-50 text-navy font-bold py-2 rounded-lg text-xs"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmInquiry}
-                className="flex-1 bg-gold hover:bg-gold-dark text-navy font-bold py-2 rounded-lg text-xs shadow"
-              >
-                Send inquiry
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>
@@ -204,14 +148,12 @@ function ProductSection({
   subtitle,
   icon,
   products,
-  onInquire,
   ctaLabel,
 }: {
   title: string;
   subtitle: string;
   icon: React.ReactNode;
   products: Product[];
-  onInquire: (p: Product) => void;
   ctaLabel: string;
 }) {
   return (
@@ -222,40 +164,42 @@ function ProductSection({
             {icon}
             {title}
           </span>
-          <h2 className="font-serif text-xl md:text-2xl font-bold text-navy mt-1">
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-navy mt-1">
             {title}
           </h2>
           <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
         </div>
+        <span className="text-xs text-gray-400 shrink-0">{products.length} items</span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onInquire={onInquire}
-            ctaLabel={ctaLabel}
-          />
+          <ProductCard key={product.id} product={product} ctaLabel={ctaLabel} />
         ))}
       </div>
     </section>
   );
 }
 
+/* -------------------- Card -------------------- */
+
 function ProductCard({
   product,
-  onInquire,
   ctaLabel,
 }: {
   product: Product;
-  onInquire: (p: Product) => void;
   ctaLabel: string;
 }) {
   const isProcedure = product.category === "procedure";
+  const isOutOfStock = !isProcedure && product.stockCount === 0;
+  const isLowStock = !isProcedure && product.stockCount > 0 && product.stockCount <= 5;
 
   return (
-    <article className="group bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-gold/40 transition-all flex flex-col">
+    <Link
+      href={`/portal/products/${product.id}`}
+      className="group bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-gold/40 transition-all flex flex-col"
+    >
+      {/* Image */}
       <div className="relative aspect-[4/3] bg-gray-50 overflow-hidden">
         {product.imageUrl ? (
           <img
@@ -263,32 +207,36 @@ function ProductCard({
             alt={product.name}
             loading="lazy"
             referrerPolicy="no-referrer"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
+            onError={(e) => { e.currentTarget.style.display = "none"; }}
             className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-off-white">
-            <ShoppingBag className="w-10 h-10 text-gold/40" />
+            <Package className="w-10 h-10 text-gold/30" />
           </div>
         )}
+        {/* Status badges */}
         {isProcedure ? (
           <span className="absolute top-3 left-3 bg-navy text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
             Procedure
           </span>
-        ) : product.stockCount === 0 ? (
+        ) : isOutOfStock ? (
           <span className="absolute top-3 right-3 bg-red-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
             Out of stock
           </span>
-        ) : product.stockCount <= 5 ? (
+        ) : isLowStock ? (
           <span className="absolute top-3 right-3 bg-amber-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-            Low stock
+            Only {product.stockCount} left
           </span>
-        ) : null}
+        ) : (
+          <span className="absolute top-3 right-3 bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+            In Stock
+          </span>
+        )}
       </div>
 
-      <div className="p-5 flex-1 flex flex-col gap-3">
+      {/* Content */}
+      <div className="p-5 flex-1 flex flex-col gap-2.5">
         <h3 className="font-serif text-base font-bold text-navy leading-snug line-clamp-2">
           {product.name}
         </h3>
@@ -296,29 +244,26 @@ function ProductCard({
           {formatPrice(product.price, product.priceTo)}
         </span>
         {product.description && (
-          <p className="text-[12px] text-gray-500 leading-relaxed line-clamp-4">
+          <p className="text-[12px] text-gray-500 leading-relaxed line-clamp-3 flex-1">
             {product.description}
           </p>
         )}
 
+        {/* CTA */}
         <div className="mt-auto pt-2 flex items-center justify-between gap-3">
           {!isProcedure && (
-            <span className="text-[10px] text-gray-400 font-semibold">
-              {product.stockCount} in stock
+            <span className={`text-[10px] font-semibold ${
+              isOutOfStock ? "text-red-400" : isLowStock ? "text-amber-500" : "text-emerald-600"
+            }`}>
+              {isOutOfStock ? "Unavailable" : `${product.stockCount} in stock`}
             </span>
           )}
-          <button
-            type="button"
-            onClick={() => onInquire(product)}
-            disabled={!isProcedure && product.stockCount === 0}
-            className="ml-auto bg-navy hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg text-xs transition-colors disabled:opacity-50 inline-flex items-center gap-1.5"
-          >
-            {!isProcedure && product.stockCount === 0
-              ? "Unavailable"
-              : ctaLabel}
-          </button>
+          <span className={`ml-auto bg-navy group-hover:bg-gold text-white group-hover:text-navy font-bold py-2 px-4 rounded-lg text-xs transition-colors inline-flex items-center gap-1.5`}>
+            {ctaLabel}
+            <ArrowRight className="w-3.5 h-3.5" />
+          </span>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }

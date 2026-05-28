@@ -13,6 +13,10 @@ import {
   Trash2,
   Check,
   CheckCheck,
+  Phone,
+  MoreVertical,
+  Smile,
+  ChevronLeft,
 } from "lucide-react";
 
 interface Patient {
@@ -37,8 +41,25 @@ function normalizeThreads(raw: any): Thread[] {
   return [];
 }
 
+function getInitials(p?: Patient | null) {
+  return ((p?.firstName?.[0] || "") + (p?.lastName?.[0] || "")).toUpperCase() || "?";
+}
+
+function formatThreadTime(iso: string | null) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const msgDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diff = today.getTime() - msgDay.getTime();
+  if (diff < 86400000) return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  if (diff < 2 * 86400000) return "Yesterday";
+  return d.toLocaleDateString([], { month: "short", day: "numeric" });
+}
+
 export default function AdminMessagesPage() {
   const [activePatientId, setActivePatientId] = useState<string | null>(null);
+  const [mobileView, setMobileView] = useState<"threads" | "chat">("threads");
   const [search, setSearch] = useState("");
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -46,23 +67,20 @@ export default function AdminMessagesPage() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [stickToBottom, setStickToBottom] = useState(true);
   const [unseenCount, setUnseenCount] = useState(0);
 
   const scrollToBottom = (smooth = true) => {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollTo({
-      top: el.scrollHeight,
-      behavior: smooth ? "smooth" : "auto",
-    });
+    el.scrollTo({ top: el.scrollHeight, behavior: smooth ? "smooth" : "auto" });
   };
 
   const handleScroll = () => {
     const el = scrollRef.current;
     if (!el) return;
-    const distanceFromBottom =
-      el.scrollHeight - el.scrollTop - el.clientHeight;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
     const atBottom = distanceFromBottom < 80;
     setStickToBottom(atBottom);
     if (atBottom) setUnseenCount(0);
@@ -78,7 +96,6 @@ export default function AdminMessagesPage() {
     initialData: [],
   });
 
-  // Auto-pick the most recent thread once threads arrive
   useEffect(() => {
     if (!activePatientId && threads.length > 0) {
       setActivePatientId(threads[0].patientId);
@@ -93,24 +110,16 @@ export default function AdminMessagesPage() {
     sendMessage,
     deleteMessage,
     markRead,
-  } = useChatThread({
-    patientId: activePatientId,
-    selfRole: "admin",
-  });
+  } = useChatThread({ patientId: activePatientId, selfRole: "admin" });
 
-  // Reset composer + auto-scroll on conversation switch
   useEffect(() => {
     setInput("");
     setSendError(null);
     setUnseenCount(0);
     setStickToBottom(true);
-    // Jump to the bottom instantly on a fresh conversation switch.
     requestAnimationFrame(() => scrollToBottom(false));
   }, [activePatientId]);
 
-  // Track new incoming messages — only auto-scroll if the user is already at
-  // the bottom. Otherwise, surface a "new messages" pill so they don't lose
-  // their place while scrolling history.
   const lastCountRef = useRef(0);
   useEffect(() => {
     const prev = lastCountRef.current;
@@ -125,7 +134,6 @@ export default function AdminMessagesPage() {
     }
   }, [messages.length, stickToBottom]);
 
-  // Mark thread read whenever the active conversation changes or window focuses
   useEffect(() => {
     if (!activePatientId) return;
     markRead();
@@ -138,8 +146,7 @@ export default function AdminMessagesPage() {
     const term = search.toLowerCase().trim();
     if (!term) return threads;
     return threads.filter((t) => {
-      const name =
-        `${t.patient?.firstName || ""} ${t.patient?.lastName || ""}`.toLowerCase();
+      const name = `${t.patient?.firstName || ""} ${t.patient?.lastName || ""}`.toLowerCase();
       return (
         name.includes(term) ||
         t.lastMessage?.toLowerCase().includes(term) ||
@@ -149,6 +156,9 @@ export default function AdminMessagesPage() {
   }, [threads, search]);
 
   const activeThread = threads.find((t) => t.patientId === activePatientId);
+  const activePatientName = activeThread?.patient
+    ? `${activeThread.patient.firstName} ${activeThread.patient.lastName}`
+    : "Patient";
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,6 +170,7 @@ export default function AdminMessagesPage() {
       await sendMessage(body);
       setInput("");
       refetchThreads();
+      inputRef.current?.focus();
     } catch (err: any) {
       setSendError(err?.message || "Failed to send.");
     } finally {
@@ -184,104 +195,126 @@ export default function AdminMessagesPage() {
   };
 
   return (
-    <div className="flex flex-col h-full space-y-4">
-      <header className="border-b border-gray-200 pb-4 flex items-center justify-between gap-4 flex-wrap shrink-0">
-        <div className="space-y-1">
-          <span className="inline-flex items-center gap-1.5 text-[10px] uppercase font-semibold tracking-widest text-gold bg-gold/10 px-2.5 py-1 rounded-full">
+    <div className="flex flex-col h-full xl:p-0">
+      {/* Page header — hidden on mobile when chat is open */}
+      <header className={`shrink-0 px-4 pt-4 pb-4 xl:px-0 xl:pt-0 border-b border-gray-100 flex items-center justify-between gap-4 ${
+        mobileView === "chat" ? "hidden lg:flex" : "flex"
+      }`}>
+        <div>
+          <span className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-widest text-gold bg-gold/10 px-2.5 py-1 rounded-full mb-1">
             <MessageSquare className="w-3 h-3" /> Live Messaging
           </span>
-          <h1 className="font-serif text-2xl md:text-3xl font-bold text-navy">
-            Patient Messages
-          </h1>
-          <p className="text-gray-500 text-xs md:text-sm leading-relaxed">
-            Auto-refreshes every 5 seconds. Reply, mark read, or delete any reply.
-          </p>
+          <h1 className="font-serif text-2xl font-bold text-navy">Patient Messages</h1>
+          <p className="text-gray-400 text-xs mt-0.5">Real-time clinical chat. Auto-refreshes every 10s.</p>
         </div>
         <button
           type="button"
-          onClick={() => {
-            refetchThreads();
-            refetchMessages();
-          }}
-          className="border border-gray-200 hover:border-gold hover:text-gold text-navy font-semibold px-3.5 py-2 rounded-lg text-xs flex items-center gap-1.5 transition-colors"
+          onClick={() => { refetchThreads(); refetchMessages(); }}
+          className="border border-gray-200 hover:border-gold hover:text-gold text-navy font-semibold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-colors"
         >
-          <RefreshCw
-            className={`w-3.5 h-3.5 ${tLoading || mLoading ? "animate-spin" : ""}`}
-          />{" "}
-          Refresh
+          <RefreshCw className={`w-3.5 h-3.5 ${tLoading || mLoading ? "animate-spin" : ""}`} />
+          <span className="hidden sm:inline">Refresh</span>
         </button>
       </header>
 
-      <div className="border border-gray-100 bg-white rounded-2xl overflow-hidden shadow-card grid grid-cols-1 lg:grid-cols-12 flex-1 min-h-0">
-        {/* Threads */}
-        <aside className="lg:col-span-4 border-r border-gray-100 flex flex-col h-full min-h-0 overflow-hidden shrink-0">
-          <div className="p-4 border-b border-gray-100 shrink-0">
+      {/* Chat Shell — responsive: stacked on mobile, side-by-side on lg+ */}
+      <div className={`flex-1 min-h-0 overflow-hidden flex shadow-xl ${
+        mobileView === "chat"
+          ? "border-0 rounded-none"
+          : "mt-4 mx-4 xl:mx-0 rounded-2xl border border-gray-100"
+      } lg:mt-4 lg:rounded-2xl lg:mx-0 lg:border lg:border-gray-100`}>
+        {/* ── Left: Thread list ── */}
+        <aside className={`flex-col border-r border-gray-100 bg-white h-full min-h-0 overflow-hidden flex-shrink-0 ${
+          // On mobile: show threads panel only when mobileView==='threads'
+          // On lg+: always show as a fixed 300px sidebar
+          mobileView === "threads" ? "flex w-full" : "hidden"
+        } lg:flex lg:w-[300px] lg:max-w-[300px]`}>
+          {/* Search */}
+          <div className="p-3 bg-[#f0f2f5] border-b border-gray-100 shrink-0">
             <div className="relative">
-              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search patients…"
-                className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-xs text-navy placeholder:text-gray-400 focus:outline-none focus:bg-white focus:border-gold focus:ring-1 focus:ring-gold transition-colors"
+                placeholder="Search or start new chat"
+                className="w-full bg-white border border-gray-200 rounded-full pl-9 pr-3 py-2 text-xs text-navy placeholder:text-gray-400 focus:outline-none focus:border-gold transition-colors"
               />
             </div>
           </div>
 
+          {/* Thread list */}
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
             {tLoading && threads.length === 0 ? (
-              <div className="p-6 text-xs text-gray-400 text-center">
-                Loading conversations…
+              <div className="flex flex-col gap-3 p-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full shimmer shrink-0" />
+                    <div className="flex-1 space-y-1.5">
+                      <div className="h-2.5 shimmer rounded w-3/4" />
+                      <div className="h-2 shimmer rounded w-1/2" />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : filteredThreads.length === 0 ? (
-              <div className="p-6 text-xs text-gray-400 text-center">
-                {threads.length === 0
-                  ? "No patient messages yet."
-                  : "No threads match your search."}
+              <div className="flex flex-col items-center justify-center h-full text-center p-6 space-y-2">
+                <MessageSquare className="w-8 h-8 text-gray-200" />
+                <p className="text-xs text-gray-400">
+                  {threads.length === 0 ? "No patient messages yet." : "No matches found."}
+                </p>
               </div>
             ) : (
               filteredThreads.map((t) => {
                 const isActive = t.patientId === activePatientId;
                 const name =
-                  `${t.patient?.firstName || ""} ${t.patient?.lastName || ""}`.trim() ||
-                  "Patient";
+                  `${t.patient?.firstName || ""} ${t.patient?.lastName || ""}`.trim() || "Patient";
                 return (
                   <button
                     key={t.patientId}
                     type="button"
-                    onClick={() => setActivePatientId(t.patientId)}
-                    className={`w-full text-left flex items-start gap-3 px-4 py-3 border-b border-gray-50 transition-colors ${
-                      isActive ? "bg-gold/5" : "hover:bg-gray-50"
+                    onClick={() => {
+                      setActivePatientId(t.patientId);
+                      setMobileView("chat");
+                    }}
+                    className={`w-full text-left flex items-center gap-3 px-4 py-3.5 border-b border-gray-50 transition-colors relative ${
+                      isActive ? "bg-[#f0f2f5]" : "hover:bg-gray-50/70"
                     }`}
                   >
-                    <div className="w-9 h-9 rounded-full bg-gold/10 text-gold flex items-center justify-center font-bold text-xs shrink-0">
-                      {name[0]?.toUpperCase() || "P"}
+                    {/* Avatar */}
+                    <div className="relative shrink-0">
+                      <div className="w-11 h-11 rounded-full bg-navy text-gold flex items-center justify-center font-bold text-sm uppercase border-2 border-white shadow-sm">
+                        {getInitials(t.patient)}
+                      </div>
+                      {t.unreadFromPatient > 0 && (
+                        <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" />
+                      )}
                     </div>
+
+                    {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-bold text-navy truncate">
-                          {name}
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-navy truncate">{name}</span>
+                        <span className="text-[9px] text-gray-400 font-medium whitespace-nowrap ml-2">
+                          {formatThreadTime(t.lastMessageAt)}
                         </span>
+                      </div>
+                      <div className="flex items-center justify-between mt-0.5">
+                        <p className="text-[11px] text-gray-500 truncate pr-2 flex-1">
+                          {t.lastMessage || "No messages yet"}
+                        </p>
                         {t.unreadFromPatient > 0 && (
-                          <span className="text-[10px] font-bold bg-red-500 text-white px-1.5 rounded-full shrink-0">
+                          <span className="text-[9px] font-bold bg-emerald-500 text-white min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center shrink-0">
                             {t.unreadFromPatient}
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-gray-500 truncate">
-                        {t.lastMessage || "No messages yet"}
-                      </p>
-                      {t.lastMessageAt && (
-                        <span className="block text-[9px] text-gray-400 mt-0.5">
-                          {new Date(t.lastMessageAt).toLocaleString([], {
-                            month: "short",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
-                      )}
                     </div>
+
+                    {/* Active indicator */}
+                    {isActive && (
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gold rounded-r-full" />
+                    )}
                   </button>
                 );
               })
@@ -289,128 +322,215 @@ export default function AdminMessagesPage() {
           </div>
         </aside>
 
-        {/* Conversation */}
-        <section className="col-span-1 lg:col-span-8 flex flex-col h-full min-h-0 bg-gray-50/40 overflow-hidden">
+        {/* ── Right: Conversation ── */}
+        <section className={`flex-col h-full min-h-0 bg-[#f0f2f5] overflow-hidden flex-1 ${
+          mobileView === "chat" ? "flex" : "hidden"
+        } lg:flex`}>
           {!activePatientId ? (
-            <div className="flex-1 flex items-center justify-center text-xs text-gray-400 px-6 text-center">
-              Select a conversation from the list to start replying.
+            /* Empty State */
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 space-y-5">
+              <div className="relative">
+                <div className="w-24 h-24 rounded-full bg-white shadow-inner flex items-center justify-center">
+                  <MessageSquare className="w-10 h-10 text-gold" />
+                </div>
+                <span className="absolute -bottom-1 -right-1 text-2xl">💬</span>
+              </div>
+              <div className="space-y-2 max-w-xs">
+                <h3 className="font-serif text-xl font-bold text-navy">Hollyhill Clinical Chat</h3>
+                <p className="text-gray-400 text-xs leading-relaxed">
+                  Select a patient conversation from the sidebar to review the clinical thread and reply in real time.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-[10px] text-gray-300 font-semibold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Auto-refreshing every 10s
+              </div>
             </div>
           ) : (
             <>
-              <header className="bg-white border-b border-gray-100 p-4 flex items-center gap-3 shrink-0">
-                <div className="w-9 h-9 rounded-full bg-gold/10 text-gold flex items-center justify-center font-bold text-xs">
-                  {activeThread?.patient?.firstName?.[0]?.toUpperCase() || "P"}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-xs font-bold text-navy truncate">
-                    {activeThread?.patient
-                      ? `${activeThread.patient.firstName} ${activeThread.patient.lastName}`
-                      : "Patient"}
-                  </h4>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[9px] text-gray-400 font-semibold">
-                      {mLoading
-                        ? "Refreshing…"
-                        : mError
-                        ? "Connection issue"
-                        : "Live · auto-refresh every 5s"}
-                    </span>
+              {/* Conversation Header */}
+              <header className="bg-[#f0f2f5] border-b border-gray-200 px-3 py-3 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-2 min-w-0">
+                  {/* Mobile back button */}
+                  <button
+                    type="button"
+                    onClick={() => setMobileView("threads")}
+                    className="lg:hidden p-1.5 rounded-full hover:bg-gray-200 text-navy transition-colors shrink-0"
+                    aria-label="Back to conversations"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <div className="w-10 h-10 rounded-full bg-navy text-gold flex items-center justify-center font-bold text-sm uppercase border-2 border-white shadow-sm shrink-0">
+                    {getInitials(activeThread?.patient)}
                   </div>
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-bold text-navy truncate">{activePatientName}</h4>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-[9px] text-gray-400 font-semibold">
+                        {mLoading ? "Refreshing…" : mError ? "Connection issue" : "Live · auto-refresh every 5s"}
+                      </span>
+                    </div>
+                    {activeThread?.patient?.email && (
+                      <p className="text-[9px] text-gray-400 mt-0.5 truncate">{activeThread.patient.email}</p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  {activeThread?.patient?.phone && (
+                    <a
+                      href={`tel:${activeThread.patient.phone}`}
+                      className="p-2 rounded-full hover:bg-gray-200 text-navy transition-colors"
+                      title="Call patient"
+                    >
+                      <Phone className="w-4 h-4" />
+                    </a>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => { refetchThreads(); refetchMessages(); }}
+                    className="p-2 rounded-full hover:bg-gray-200 text-navy transition-colors"
+                    title="Refresh"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${tLoading || mLoading ? "animate-spin" : ""}`} />
+                  </button>
                 </div>
               </header>
 
+              {/* Chat bubbles */}
               <div
                 ref={scrollRef}
                 onScroll={handleScroll}
-                className="relative flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-3"
+                className="relative flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-1"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4d4d4' fill-opacity='0.12'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                  backgroundColor: "#e5ddd5",
+                }}
               >
                 {mLoading && messages.length === 0 ? (
-                  <div className="text-center text-xs text-gray-400 py-10">
-                    Loading thread…
+                  <div className="flex flex-col gap-3 pt-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className={`flex ${i % 2 === 0 ? "justify-end" : "justify-start"}`}>
+                        <div className={`h-8 shimmer rounded-2xl ${i % 2 === 0 ? "w-48" : "w-36"}`} />
+                      </div>
+                    ))}
                   </div>
                 ) : messages.length === 0 ? (
-                  <div className="text-center text-xs text-gray-400 py-10">
-                    No messages yet — send the first reply below.
+                  <div className="flex items-center justify-center h-full">
+                    <div className="bg-white/70 backdrop-blur-sm text-navy text-xs font-semibold px-4 py-2 rounded-full shadow-sm border border-white/50">
+                      No messages yet — send the first reply below
+                    </div>
                   </div>
                 ) : (
-                  messages.map((msg) => {
-                    const isAdmin = msg.senderRole === "admin";
-                    const isPending = msg.id.startsWith("temp-");
-                    const isFailed = (msg as any).failed === true;
-                    return (
-                      <ChatBubble
-                        key={msg.id}
-                        side={isAdmin ? "right" : "left"}
-                        avatar={
-                          isAdmin
-                            ? "RA"
-                            : (activeThread?.patient?.firstName?.[0] || "P").toUpperCase()
-                        }
-                        pending={isPending}
-                        failed={isFailed}
-                        message={msg}
-                        canDelete={false}
-                        onDelete={() => handleDelete(msg.id)}
-                      />
-                    );
-                  })
+                  <>
+                    {/* Date chip */}
+                    <div className="flex justify-center mb-4">
+                      <span className="bg-white/70 backdrop-blur-sm text-[10px] text-gray-600 font-semibold px-3 py-1 rounded-full shadow-sm">
+                        {messages[0]
+                          ? new Date(messages[0].createdAt).toLocaleDateString([], {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })
+                          : ""}
+                      </span>
+                    </div>
+                    {messages.map((msg, idx) => {
+                      const isAdmin = msg.senderRole === "admin";
+                      const isPending = msg.id.startsWith("temp-");
+                      const isFailed = (msg as any).failed === true;
+                      const prevMsg = idx > 0 ? messages[idx - 1] : null;
+                      const showDate =
+                        prevMsg &&
+                        new Date(msg.createdAt).toDateString() !==
+                          new Date(prevMsg.createdAt).toDateString();
+                      return (
+                        <div key={msg.id}>
+                          {showDate && (
+                            <div className="flex justify-center my-4">
+                              <span className="bg-white/70 backdrop-blur-sm text-[10px] text-gray-600 font-semibold px-3 py-1 rounded-full shadow-sm">
+                                {new Date(msg.createdAt).toLocaleDateString([], {
+                                  weekday: "long",
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                })}
+                              </span>
+                            </div>
+                          )}
+                          <ChatBubble
+                            side={isAdmin ? "right" : "left"}
+                            pending={isPending}
+                            failed={isFailed}
+                            message={msg}
+                            canDelete={isAdmin}
+                            onDelete={() => handleDelete(msg.id)}
+                          />
+                        </div>
+                      );
+                    })}
+                  </>
                 )}
                 <div ref={messagesEndRef} />
               </div>
 
+              {/* Scroll-to-bottom pill */}
               {!stickToBottom && (
-                <div className="relative">
+                <div className="relative z-10">
                   <button
                     type="button"
-                    onClick={() => {
-                      scrollToBottom(true);
-                      setStickToBottom(true);
-                      setUnseenCount(0);
-                    }}
-                    className="absolute -top-12 left-1/2 -translate-x-1/2 bg-navy text-white text-[11px] font-semibold px-3 py-1.5 rounded-full shadow-lg hover:bg-navy/90 transition-colors flex items-center gap-1.5"
+                    onClick={() => { scrollToBottom(true); setStickToBottom(true); setUnseenCount(0); }}
+                    className="absolute -top-14 left-1/2 -translate-x-1/2 bg-white text-navy text-[11px] font-bold px-4 py-2 rounded-full shadow-lg hover:shadow-xl border border-gray-100 flex items-center gap-1.5 transition-all hover:scale-105"
                   >
                     {unseenCount > 0
-                      ? `${unseenCount} new ${
-                          unseenCount === 1 ? "message" : "messages"
-                        }`
+                      ? `${unseenCount} new ${unseenCount === 1 ? "message" : "messages"}`
                       : "Jump to latest"}
-                    <span aria-hidden>↓</span>
+                    <span aria-hidden className="text-gold">↓</span>
                   </button>
                 </div>
               )}
 
+              {/* Composer */}
               <form
                 onSubmit={handleSend}
-                className="bg-white border-t border-gray-100 p-3 space-y-2 shrink-0"
+                className="bg-[#f0f2f5] border-t border-gray-200 px-3 py-3 flex items-center gap-2.5 shrink-0"
               >
                 {sendError && (
-                  <div className="text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2 flex items-center gap-2">
+                  <div className="absolute bottom-20 left-4 right-4 z-20 text-[11px] text-red-600 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5 flex items-center gap-2 shadow-lg">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     <span>{sendError}</span>
                   </div>
                 )}
-                <div className="flex gap-2">
+                <button type="button" className="p-2 rounded-full hover:bg-gray-200 text-gray-500 transition-colors shrink-0" title="Emoji (coming soon)">
+                  <Smile className="w-5 h-5" />
+                </button>
+                <div className="flex-1 relative">
                   <input
+                    ref={inputRef}
                     type="text"
                     required
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={`Reply to ${
-                      activeThread?.patient?.firstName || "patient"
-                    }…`}
-                    className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3.5 py-2.5 text-xs text-navy focus:outline-none focus:border-gold focus:bg-white transition-colors"
+                    placeholder={`Type a reply to ${activeThread?.patient?.firstName || "patient"}…`}
+                    className="w-full bg-white border border-gray-200 rounded-full px-5 py-2.5 text-xs text-navy focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/20 transition-colors pr-4"
                     disabled={sending}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend(e as any);
+                      }
+                    }}
                   />
-                  <button
-                    type="submit"
-                    disabled={sending || !input.trim()}
-                    className="bg-gold hover:bg-gold-dark text-navy p-2.5 rounded-lg transition-colors focus:outline-none disabled:opacity-50"
-                    aria-label="Send"
-                  >
-                    <Send className="w-4 h-4" />
-                  </button>
                 </div>
+                <button
+                  type="submit"
+                  disabled={sending || !input.trim()}
+                  className="bg-gold hover:bg-gold-dark text-navy w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all focus:outline-none disabled:opacity-50 shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                  aria-label="Send"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
               </form>
             </>
           )}
@@ -420,11 +540,10 @@ export default function AdminMessagesPage() {
   );
 }
 
-/* -------------------- Bubble -------------------- */
+/* ─────────── Chat Bubble ─────────── */
 
 interface BubbleProps {
   side: "left" | "right";
-  avatar: string;
   pending?: boolean;
   failed?: boolean;
   canDelete?: boolean;
@@ -436,100 +555,85 @@ interface BubbleProps {
     createdAt: string;
     isRead?: boolean;
     readAt?: string | null;
+    senderRole?: string;
   };
 }
 
-function ChatBubble({
-  side,
-  avatar,
-  pending,
-  failed,
-  message,
-  canDelete,
-  onDelete,
-}: BubbleProps) {
+function ChatBubble({ side, pending, failed, message, canDelete, onDelete }: BubbleProps) {
   const isRight = side === "right";
+  const timeString = new Date(message.createdAt).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   return (
-    <div
-      className={`group flex gap-2.5 max-w-[85%] ${
-        isRight ? "ml-auto flex-row-reverse" : "mr-auto"
-      }`}
-    >
+    <div className={`flex w-full mb-0.5 ${isRight ? "justify-end" : "justify-start"}`}>
       <div
-        className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold ${
-          isRight ? "bg-gold text-navy" : "bg-navy text-gold"
-        }`}
+        className={`relative max-w-[72%] group ${
+          isRight
+            ? "rounded-2xl rounded-tr-sm"
+            : "rounded-2xl rounded-tl-sm"
+        } px-3.5 py-2 text-[12.5px] leading-relaxed shadow-sm min-w-[80px] ${
+          isRight
+            ? `bg-[#d9fdd3] text-navy ${pending ? "opacity-70" : ""} ${failed ? "ring-1 ring-red-300" : ""}`
+            : "bg-white text-navy border border-gray-100/80"
+        } ${message.deleted ? "italic text-gray-400" : ""}`}
+        style={{ wordBreak: "break-word" }}
       >
-        {avatar}
-      </div>
-      <div className="flex flex-col items-end gap-1">
-        <div
-          className={`relative rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed shadow-sm ${
-            isRight
-              ? `bg-gold text-navy rounded-tr-none font-medium ${
-                  pending ? "opacity-70" : ""
-                } ${failed ? "ring-1 ring-red-300" : ""}`
-              : "bg-white text-navy border border-gray-100 rounded-tl-none"
-          } ${message.deleted ? "italic text-gray-400" : ""}`}
-        >
-          {canDelete && onDelete && (
-            <button
-              type="button"
-              onClick={onDelete}
-              className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-2 -left-2 w-6 h-6 rounded-full bg-white border border-gray-200 shadow-sm text-red-500 flex items-center justify-center hover:bg-red-50"
-              aria-label="Delete message"
-              title="Delete message"
-            >
-              <Trash2 className="w-3 h-3" />
-            </button>
+        {/* Bubble tail */}
+        {isRight ? (
+          <svg
+            className="absolute -right-1.5 top-0 w-3 h-3 text-[#d9fdd3]"
+            viewBox="0 0 10 10"
+            fill="currentColor"
+          >
+            <path d="M0 0 Q10 0 10 10 L0 0Z" />
+          </svg>
+        ) : (
+          <svg
+            className="absolute -left-1.5 top-0 w-3 h-3 text-white"
+            viewBox="0 0 10 10"
+            fill="currentColor"
+          >
+            <path d="M10 0 Q0 0 0 10 L10 0Z" />
+          </svg>
+        )}
+
+        {/* Delete button */}
+        {canDelete && onDelete && !message.deleted && (
+          <button
+            type="button"
+            onClick={onDelete}
+            className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-2.5 right-0 w-6 h-6 rounded-full bg-white border border-gray-200 shadow-md text-red-400 flex items-center justify-center hover:bg-red-50 hover:text-red-600 z-10"
+            aria-label="Delete message"
+            title="Delete message"
+          >
+            <Trash2 className="w-3 h-3" />
+          </button>
+        )}
+
+        <p className="whitespace-pre-line break-words pb-4">
+          {message.deleted ? "This message was deleted" : message.body}
+        </p>
+
+        {/* Time + status */}
+        <div className={`absolute bottom-1.5 right-2.5 flex items-center gap-0.5 text-[8.5px] font-semibold ${message.deleted ? "text-gray-300" : "text-gray-400"} select-none`}>
+          <span>{timeString}</span>
+          {isRight && !message.deleted && (
+            <ReadReceipt isRead={!!message.isRead} pending={!!pending} failed={!!failed} />
           )}
-          <p className="whitespace-pre-line break-words">
-            {message.deleted
-              ? "Message deleted"
-              : message.body || "Message deleted"}
-          </p>
-          <div className="flex items-center justify-end gap-1 mt-1 text-[8px] font-semibold text-gray-400">
-            <span>
-              {pending
-                ? "Sending…"
-                : failed
-                ? "Failed to send"
-                : new Date(message.createdAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-            </span>
-            {isRight && !message.deleted && (
-              <ReadReceipt
-                isRead={!!message.isRead}
-                pending={!!pending}
-                failed={!!failed}
-              />
-            )}
-          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function ReadReceipt({
-  isRead,
-  pending,
-  failed,
-}: {
-  isRead: boolean;
-  pending: boolean;
-  failed: boolean;
-}) {
+function ReadReceipt({ isRead, pending, failed }: { isRead: boolean; pending: boolean; failed: boolean }) {
   if (failed) return null;
-  if (pending) {
-    return <Check className="w-3 h-3 text-gray-400" aria-label="Sending" />;
-  }
+  if (pending) return <Check className="w-2.5 h-2.5 text-gray-400" aria-label="Sending" />;
   return isRead ? (
-    <CheckCheck className="w-3 h-3 text-emerald-600" aria-label="Read" />
+    <CheckCheck className="w-2.5 h-2.5 text-sky-500" aria-label="Read" />
   ) : (
-    <CheckCheck className="w-3 h-3 text-gray-400" aria-label="Delivered" />
+    <CheckCheck className="w-2.5 h-2.5 text-gray-400" aria-label="Delivered" />
   );
 }

@@ -2,9 +2,12 @@ import express from "express";
 import { db } from "../config/db.js";
 import { users, patients, auditLogs, passwordResetTokens } from "../db/schema.js";
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
+import bcrypt from "bcrypt";
+import crypto from "crypto";
 import { verifyToken } from "../middleware/auth.js";
 import { requireRole } from "../middleware/roleCheck.js";
 import { logActivity, AuditActions } from "../lib/auditLog.js";
+import { ENV } from "../config/env.js";
 
 const router = express.Router();
 
@@ -189,5 +192,201 @@ router.post(
   }
 );
 
+
+/**
+ * 6. List clinic staff accounts (role = "admin"). Used by the Team tab in
+ *    System Settings so the principal dentist can see who has access.
+ */
+router.get(
+  "/staff",
+  verifyToken,
+  requireRole("admin"),
+  async (_req, res) => {
+    if (!requireDb(res)) return;
+    try {
+      const rows = await db
+        .select({
+          id: users.id,
+          email: users.email,
+          isActive: users.isActive,
+          mustChangePassword: users.mustChangePassword,
+          createdAt: users.createdAt,
+        })
+        .from(users)
+        .where(eq(users.role, "admin"))
+        .orderBy(desc(users.createdAt));
+      return res.status(200).json(rows);
+    } catch (err) {
+      console.error("[admin.staff] failed", err);
+      return res.status(500).json({ message: "Failed to load staff list." });
+    }
+  }
+);
+
+/**
+ * 7. Create a new doctor / clinical admin account.
+ *
+ *    Body: { email, password? }
+ *
+ *    If `password` is omitted we generate a 12-character temporary
+ *    password and return it in the response so the issuing admin can hand
+ *    it to the new doctor in person. The new account is forced to change
+ *    the password on first login.
+ */
+router.post(
+  "/staff",
+  verifyToken,
+  requireRole("admin"),
+  async (req, res) => {
+    if (!requireDb(res)) return;
+
+    const { email, password, name } = req.body || {};
+    const cleanEmail =
+      typeof email === "string" ? email.trim().toLowerCase() : "";
+
+    if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      return res.status(400).json({ message: "A valid email is required." });
+    }
+
+    let temporaryPassword =
+      typeof password === "string" && password.length >= 8 ? password : null;
+    if (!temporaryPassword) {
+      // 12 chars, mix of upper/lower/digits — crypto-random.
+      temporaryPassword = crypto.randomBytes(9).toString("base64url").slice(0, 12);
+    }
+
+    try {
+      const existing = await db
+        .select({ id: users.id, role: users.role })
+        .from(users)
+        .where(eq(users.email, cleanEmail))
+        .limit(1);
+      if (existing.length > 0) {
+        return res
+          .status(409)
+          .json({ message: "An account with this email already exists." });
+      }
+
+      const passwordHash = await bcrypt.hash(temporaryPassword, 10);
+      const [inserted] = await db
+        .insert(users)
+        .values({
+          email: cleanEmail,
+          passwordHash,
+          role: "admin",
+          isActive: true,
+          mustChangePassword: true,
+        })
+        .returning({
+          id: users.id,
+          email: users.email,
+          role: users.role,
+          mustChangePassword: users.mustChangePassword,
+          isActive: users.isActive,
+          createdAt: users.createdAt,
+        });
+
+      await logActivity(req, "admin.user.created", {
+        targetType: "user",
+        targetId: inserted.id,
+        metadata: { email: inserted.email, role: "admin", name: name || null },
+      });
+
+      const baseUrl = (ENV.CLIENT_URL || "http://localhost:3000").replace(
+        /\/$/,
+        ""
+      );
+      // Sign-in page with email pre-filled. The client falls back to the
+      // generic /portal/login if /admin/login is not the desired entry.
+      const loginUrl = `${baseUrl}/portal/login?email=${encodeURIComponent(
+        inserted.email
+      )}`;
+
+      const inviteSubject = `Your ${
+        process.env.CLINIC_NAME || "Hollyhill Dental"
+      } clinical portal account`;
+      const inviteBody = [
+        `Hello${name ? ` ${name}` : ""},`,
+        ``,
+        `An admin account has been created for you on the ${
+          process.env.CLINIC_NAME || "Hollyhill Dental"
+        } clinical portal.`,
+        ``,
+        `Sign-in link: ${loginUrl}`,
+        `Email:        ${inserted.email}`,
+        `Temporary password: ${temporaryPassword}`,
+        ``,
+        `For your security, you'll be asked to choose a new password the first time you sign in. The temporary password above will stop working after that.`,
+        ``,
+        `If you weren't expecting this invitation, please ignore this message or contact the clinic.`,
+      ].join("\n");
+
+      return res.status(201).json({
+        message: "Doctor account created.",
+        user: inserted,
+        temporaryPassword,
+        loginUrl,
+        invite: {
+          subject: inviteSubject,
+          body: inviteBody,
+        },
+      });
+    } catch (err) {
+      console.error("[admin.staff.create] failed", err);
+      return res
+        .status(500)
+        .json({ message: "Failed to create doctor account." });
+    }
+  }
+);
+
+/**
+ * 8. Activate / deactivate a staff account. We never hard-delete admin
+ *    rows because audit logs reference them; flipping `isActive` blocks
+ *    login while preserving history.
+ */
+router.patch(
+  "/staff/:id/status",
+  verifyToken,
+  requireRole("admin"),
+  async (req, res) => {
+    if (!requireDb(res)) return;
+    const { isActive } = req.body || {};
+    if (typeof isActive !== "boolean") {
+      return res.status(400).json({ message: "isActive must be a boolean." });
+    }
+    if (req.params.id === req.user.id && !isActive) {
+      return res
+        .status(400)
+        .json({ message: "You can't deactivate your own account." });
+    }
+
+    try {
+      const [updated] = await db
+        .update(users)
+        .set({ isActive, updatedAt: new Date() })
+        .where(and(eq(users.id, req.params.id), eq(users.role, "admin")))
+        .returning({
+          id: users.id,
+          email: users.email,
+          isActive: users.isActive,
+        });
+      if (!updated) {
+        return res.status(404).json({ message: "Staff account not found." });
+      }
+      await logActivity(req, "admin.user.status_changed", {
+        targetType: "user",
+        targetId: updated.id,
+        metadata: { isActive },
+      });
+      return res.status(200).json({ user: updated });
+    } catch (err) {
+      console.error("[admin.staff.status] failed", err);
+      return res
+        .status(500)
+        .json({ message: "Failed to update staff status." });
+    }
+  }
+);
 
 export default router;

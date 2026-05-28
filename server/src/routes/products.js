@@ -37,6 +37,29 @@ router.get("/", async (_req, res) => {
   }
 });
 
+/**
+ * GET /api/products/:id — single product by ID (public).
+ * Used by the patient portal product detail page.
+ */
+router.get("/:id", async (req, res) => {
+  if (!requireDb(res)) return;
+  try {
+    const [product] = await db
+      .select()
+      .from(products)
+      .where(eq(products.id, req.params.id))
+      .limit(1);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found." });
+    }
+    res.status(200).json(product);
+  } catch (error) {
+    console.error("[products] GET /:id failed", error);
+    res.status(500).json({ message: "Failed to load product." });
+  }
+});
+
+
 /* POST create — admin only. */
 router.post("/", verifyToken, requireRole("admin"), async (req, res) => {
   if (!requireDb(res)) return;
