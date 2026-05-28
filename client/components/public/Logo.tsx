@@ -26,12 +26,11 @@ interface LogoProps {
 /**
  * Brand logo component for Hollyhill Dental.
  *
- * - icon variant → tooth mark only (used in tight spots, app icons).
- * - full variant → tooth mark + "HollyHill Dental" wordmark with the
- *   accent on "Dental" + "Smile with Confidence" tagline below.
- *
- * Sizing is driven by the `size` prop and everything else scales off it,
- * so a single `size={48}` produces a balanced lockup at any breakpoint.
+ * Renders the tooth mark (`/logo-mark.png`) on the left and a custom
+ * text-based wordmark + tagline on the right when `variant="full"`. The
+ * wordmark is hand-built so the typography stays crisp at every size and
+ * the colours can switch between dark and light themes — never a baked-in
+ * raster.
  */
 export default function Logo({
   variant = "icon",
@@ -46,15 +45,16 @@ export default function Logo({
 
   const nameColor = theme === "light" ? "text-white" : "text-navy";
   const accentColor = theme === "light" ? "text-sky-300" : "text-[#009BDE]";
-  const tagColor = theme === "light" ? "text-white/70" : "text-gray-500";
+  const tagColor = theme === "light" ? "text-white/75" : "text-gray-500";
 
-  // Wordmark scales with the mark for a balanced lockup.
+  // Wordmark scales with the mark for a balanced lockup at every size.
   const nameSize = Math.max(size * 0.46, 16);
   const tagSize = Math.max(size * 0.2, 9);
+  const wordmarkGap = Math.max(size * 0.18, 6);
 
   const inner = (
-    <span className="inline-flex items-center gap-3 select-none">
-      {/* Tooth mark */}
+    <span className="inline-flex items-center gap-2.5 sm:gap-3 select-none">
+      {/* Tooth mark — always the same crisp PNG. */}
       <span
         className="relative shrink-0 flex items-center justify-center"
         style={{ width: size, height: size }}
@@ -71,21 +71,20 @@ export default function Logo({
 
       {variant === "full" && (
         <span className="flex flex-col leading-none gap-[5px] min-w-0">
-          {/* Wordmark — "HollyHill" navy/white with a wide gap before
-              the sky-blue "Dental" accent. */}
+          {/* Wordmark — "HollyHill" + thin gap + sky-blue "Dental". */}
           <span
             className={`font-serif font-bold tracking-tight ${nameColor} whitespace-nowrap`}
             style={{ fontSize: nameSize }}
           >
             HollyHill
-            <span className="inline-block" style={{ width: nameSize * 0.18 }} />
+            <span className="inline-block" style={{ width: wordmarkGap }} />
             <span className={accentColor}>Dental</span>
           </span>
 
           {showTagline && (
             <span
-              className={`font-sans font-extrabold uppercase ${tagColor} whitespace-nowrap`}
-              style={{ fontSize: tagSize, letterSpacing: "0.24em" }}
+              className={`font-sans font-bold uppercase ${tagColor} whitespace-nowrap`}
+              style={{ fontSize: tagSize, letterSpacing: "0.22em" }}
             >
               Smile with Confidence
             </span>

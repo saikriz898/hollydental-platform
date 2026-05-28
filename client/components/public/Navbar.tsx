@@ -190,10 +190,10 @@ export default function Navbar() {
           {/* Logo block */}
           <div className="flex items-center gap-3 shrink-0">
             <div className="inline-flex sm:hidden">
-              <Logo variant="full" theme="dark" size={scrolled ? 36 : 42} />
+              <Logo variant="full" theme="dark" size={scrolled ? 30 : 34} />
             </div>
             <div className="hidden sm:inline-flex">
-              <Logo variant="full" theme="dark" size={scrolled ? 50 : 64} />
+              <Logo variant="full" theme="dark" size={scrolled ? 44 : 56} />
             </div>
           </div>
 
